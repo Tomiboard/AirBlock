@@ -1,0 +1,9 @@
+<resources>
+    <string name="AirBlock">AirBlock</string>
+    <string name="bts_scan">SCAN / REGISTER NEW TAG</string>
+    <string name="btn_manage">Manage Apps</string>
+    <string name="dont_have_tag">No physical security key detected. Register a new NFC tag to arm the system.</string>
+    <string name="buy_tag">Don\'t have a Tag? Get one here.</string>
+    <string name="any_tag_info">Or use any standard NFC sticker, card or tag</string>
+
+</resources>
