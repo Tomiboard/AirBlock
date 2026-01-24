@@ -5,16 +5,20 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,11 +29,35 @@ import com.example.airblock.ui.theme.AirBlockTheme
 @Composable
 fun AirBlockHomeScreen() {
 
+    // Vectors
+    val finalPainter = if (!AirBlockState.hasTagRegistered) {
+        // CASO 1: Sensor
+        painterResource(id = R.drawable.sensors_24)
+    } else {
+        // CASO 2: lock open
+        painterResource(id = R.drawable.lock_open_24)
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = colorResource(id = R.color.dark_background))
     ) {
+
+        Icon(
+            painter = finalPainter,
+            contentDescription = "Don't have tag",
+            modifier = Modifier
+                .size(240.dp)
+                .align(Alignment.Center)
+                .offset(y = (-150).dp),
+            tint = if (!AirBlockState.hasTagRegistered) {
+                colorResource(id = R.color.no_tag_yellow)
+            } else {
+                colorResource(id = R.color.unlock_red)
+            }
+        )
+
 
         Column(
             modifier = Modifier
@@ -38,7 +66,7 @@ fun AirBlockHomeScreen() {
         ) {
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { AirBlockState.hasTagRegistered = true },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(
                         id = R.color.button_surface
@@ -56,23 +84,23 @@ fun AirBlockHomeScreen() {
                 )
             }
 
-            Text(
-                text = stringResource(id = R.string.buy_tag),
-                color = Color.White,
-                fontSize = 20.sp,
-                modifier = Modifier
-                    .padding(bottom = 40.dp)
-                    .align(Alignment.CenterHorizontally)
+            if (!AirBlockState.hasTagRegistered) {
+                Text( // Falta un on click listener para link amazon
+                    text = stringResource(id = R.string.buy_tag),
+                    color = Color.White,
+                    fontSize = 20.sp,
+                    modifier = Modifier
+                        .padding(bottom = 40.dp)
+                        .align(Alignment.CenterHorizontally)
+                )
 
-            )
-
-            Text(
-                text = stringResource(id = R.string.any_tag_info),
-                color = Color.Gray,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-            )
-
+                Text(
+                    text = stringResource(id = R.string.any_tag_info),
+                    color = Color.Gray,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                )
+            }
 
         }
 

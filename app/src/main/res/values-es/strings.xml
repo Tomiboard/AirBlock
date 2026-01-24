@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="AirBlock">AirBlock</string>
+    <string name="app_name">AirBlock</string>
     <string name="bts_scan">SCAN / REGISTRA UN TAG NUEVO</string>
     <string name="btn_manage">Gestionar Apps</string>
     <string name="dont_have_tag">No se detecta llave física. Escanea un Tag NFC para activar el sistema.</string>

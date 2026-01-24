@@ -11,8 +11,14 @@
     // Set up background color
     <color name="dark_background">#FF121212</color>
     <color name="electric_cyan">#FF00E5FF</color>
-    <color name="deep_red">#FFFF3D00</color>
     <color name="text_gray">#FFAAAAAA</color>
     <color name="faint_white">#33FFFFFF</color>
     <color name="button_surface">#FF2A2A2A</color>
+
+    // Lock, unlock, no tag
+    <color name="unlock_red">#FFFF2A2A</color>
+    <color name="lock_green">#FF00E676</color>
+    <color name="no_tag_yellow">#FFFFD600</color>
+
+
 </resources>
