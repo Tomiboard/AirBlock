@@ -91,7 +91,13 @@ fun AirBlockHomeScreen() {
             .background(iconColor.copy(alpha = 0.04f))
     ) {
 
-        ModeIcons()
+        ModeIcons(
+            finalIcon = finalIcon,
+            iconColor = iconColor,
+            textColor = textColor,
+            pulseDuration = pulseDuration,
+            iconText = iconText
+        )
 
         Column(
             modifier = Modifier

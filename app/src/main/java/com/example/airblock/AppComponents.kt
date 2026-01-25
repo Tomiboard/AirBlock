@@ -25,6 +25,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -38,55 +39,13 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun ModeIcons(
+    finalIcon: Painter,
+    iconColor: Color,
+    textColor: Color,
+    pulseDuration: Int,
+    iconText: String,
 
 ) {
-
-
-    // Vectors
-    val finalIcon = when {
-        // Sensor
-        !AirBlockState.hasTagRegistered -> painterResource(id = R.drawable.sensors_24)
-        // lock open
-        !AirBlockState.isLocked -> painterResource(id = R.drawable.lock_open_24)
-        // lock
-        else -> painterResource(id = R.drawable.lock_closed_24)
-    }
-
-    val iconColor = when {
-        // Sensor
-        !AirBlockState.hasTagRegistered -> colorResource(id = R.color.no_tag_yellow)
-        // lock open
-        !AirBlockState.isLocked -> colorResource(id = R.color.unlock_red)
-        // lock
-        else -> colorResource(id = R.color.lock_green)
-
-    }
-
-    val textColor = when {
-        // Sensor
-        !AirBlockState.hasTagRegistered -> colorResource(id = R.color.no_tag_yellow_text)
-        // lock open
-        !AirBlockState.isLocked -> colorResource(id = R.color.unlock_red_text)
-        // lock
-        else -> colorResource(id = R.color.lock_green_text)
-
-    }
-
-    val pulseDuration = when {
-        !AirBlockState.hasTagRegistered -> 2000
-        // lock open
-        !AirBlockState.isLocked -> 1500
-        // lock
-        else -> 4000
-    }
-
-    val iconText = when {
-        !AirBlockState.hasTagRegistered -> stringResource(id = R.string.no_tag)
-        // lock open
-        !AirBlockState.isLocked -> stringResource(id = R.string.unlocked)
-        // lock
-        else -> stringResource(id = R.string.locked)
-    }
 
 // 1. CONFIGURACIÓN DEL PARPADEO (ALERTA)
     key(pulseDuration) {
@@ -185,9 +144,10 @@ fun ModeIcons(
 }
 }
 
+/*
 @Preview
 @Composable
 fun ModeIconsPreview() {
     ModeIcons()
 
-}
+}*/
