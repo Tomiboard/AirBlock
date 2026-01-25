@@ -62,7 +62,7 @@ fun AirBlockHomeScreen() {
         // lock open
         !AirBlockState.isLocked -> 1500
         // lock
-        else -> 4000
+        else -> 3000
     }
 
     val iconText = when {
@@ -88,7 +88,25 @@ fun AirBlockHomeScreen() {
             iconText = iconText
         )
 
-        Column(
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 100.dp)
+        ) {
+            when {
+                !AirBlockState.hasTagRegistered -> TagNotRegistered()
+                // lock open
+                !AirBlockState.isLocked -> PhoneUnLocked()
+                // lock
+                else -> {
+                    PhoneLocked()
+                }
+
+            }
+        }
+
+
+        /*Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 100.dp)
@@ -146,7 +164,7 @@ fun AirBlockHomeScreen() {
                 )
             }
 
-        }
+        }*/
 
 
     }
