@@ -1,5 +1,11 @@
 package com.example.airblock
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,16 +15,15 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -48,6 +53,19 @@ fun AirBlockHomeScreen() {
         colorResource(id = R.color.unlock_red)
     }
 
+// 1. CONFIGURACIÓN DEL PARPADEO (ALERTA)
+    val infiniteTransition = rememberInfiniteTransition(label = "screen_flash")
+
+    val flashAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.05f, // min intensity
+        targetValue = 0.25f,  // max intensity
+        animationSpec = infiniteRepeatable(
+            // expansion time
+            animation = tween(3000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse // Sube y baja suavemente
+        ),
+        label = "flash_alpha"
+    )
 
     Box(
         modifier = Modifier
@@ -56,45 +74,58 @@ fun AirBlockHomeScreen() {
             .background(iconColor.copy(alpha = 0.04f))
     ) {
 
-
-        Icon(
-            painter = finalPainter,
-            contentDescription = "mode icon",
+// 2. EL BOX PRINCIPAL CON EL FONDO ANIMADO
+        Box(
             modifier = Modifier
-                .size(240.dp)
-                .align(Alignment.Center)
-                .offset(y = (-150).dp)
-                .drawBehind { // Neon efect
+                .fillMaxSize()
+                // Capa 1: Fondo Negro Sólido
+                .background(Color.Black)
+                // Capa 2: El tinte que parpadea
+                .background(
+                    // 👇 Aquí usamos el valor animado 'flashAlpha'
+                    color = iconColor.copy(alpha = flashAlpha)
+                ),
+            contentAlignment = Alignment.Center
+        ) {
 
-                    val shadowSizeMultiplier = 2f
-                    val shadowRadius = (size.maxDimension) / 2 * shadowSizeMultiplier
+            Icon(
+                painter = finalPainter,
+                contentDescription = "mode icon",
+                modifier = Modifier
+                    .size(240.dp)
+                    .align(Alignment.Center)
+                    .offset(y = (-150).dp)
+                    .drawBehind { // Neon efect
 
-                    val shadowBrush = Brush.radialGradient(
-                        colorStops = arrayOf(
+                        val shadowSizeMultiplier = 1.8f
+                        val shadowRadius = (size.maxDimension) / 2 * shadowSizeMultiplier
 
-                            0.0f to iconColor.copy(alpha = 0.3f),
+                        val shadowBrush = Brush.radialGradient(
+                            colorStops = arrayOf(
 
-                            0.5f to iconColor.copy(alpha = 0.1f),
+                                0.0f to iconColor.copy(alpha = 0.2f),
 
-                            0.85f to iconColor.copy(alpha = 0.05f),
+                                0.5f to iconColor.copy(alpha = 0.1f),
 
-                            // Borde final transparente
-                            1.0f to Color.Transparent
-                        ),
-                        center = center,
-                        radius = shadowRadius
-                    )
+                                0.85f to iconColor.copy(alpha = 0.05f),
 
-                    drawCircle(
-                        brush = shadowBrush,
-                        radius = shadowRadius,
-                        center = center
-                    )
-                },
+                                // Borde final transparente
+                                1.0f to Color.Transparent
+                            ),
+                            center = center,
+                            radius = shadowRadius
+                        )
 
-            tint = iconColor
-        )
+                        drawCircle(
+                            brush = shadowBrush,
+                            radius = shadowRadius,
+                            center = center
+                        )
+                    },
 
+                tint = iconColor
+            )
+        }
 
         Column(
             modifier = Modifier
