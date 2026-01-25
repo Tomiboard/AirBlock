@@ -6,4 +6,9 @@
     <string name="buy_tag">Don\'t have a Tag? Get one here.</string>
     <string name="any_tag_info">Or use any standard NFC sticker, card or tag</string>
 
+    // Icon text
+    <string name="no_tag">AIRBLOCK STANDBY</string>
+    <string name="unlocked">AIRBLOCK DISABLED</string>
+    <string name="locked">AIRBLOCK ACTIVE</string>
+
 </resources>

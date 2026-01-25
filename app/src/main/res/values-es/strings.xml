@@ -6,4 +6,7 @@
     <string name="dont_have_tag">No se detecta llave física. Escanea un Tag NFC para activar el sistema.</string>
     <string name="buy_tag">¿No tienes Tag? Consigue uno aquí</string>
     <string name="any_tag_info">O usa cualquier tarjeta, pegatina o tag NFC estándar</string>
+    <string name="no_tag">AIRBLOCK EN ESPERA</string>
+    <string name="unlocked">AIRBLOCK INACTIVO</string>
+    <string name="locked">AIRBLOCK ACTIVO</string>
 </resources>

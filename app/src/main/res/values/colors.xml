@@ -19,5 +19,8 @@
     <color name="unlock_red">#FFFF2A2A</color>
     <color name="lock_green">#FF00E676</color>
     <color name="no_tag_yellow">#FFD600</color>
+    <color name="no_tag_yellow_text">#FDEE8F</color>
+    <color name="lock_green_text">#80FFC0</color>
+    <color name="unlock_red_text">#FE7D7D</color>
 
 </resources>

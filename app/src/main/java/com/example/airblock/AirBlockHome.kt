@@ -53,6 +53,8 @@ fun AirBlockHomeScreen() {
         colorResource(id = R.color.unlock_red)
     }
 
+    val pulseDuration = if(!AirBlockState.hasTagRegistered) 2000 else 500
+
 // 1. CONFIGURACIÓN DEL PARPADEO (ALERTA)
     val infiniteTransition = rememberInfiniteTransition(label = "screen_flash")
 
@@ -61,7 +63,7 @@ fun AirBlockHomeScreen() {
         targetValue = 0.25f,  // max intensity
         animationSpec = infiniteRepeatable(
             // expansion time
-            animation = tween(3000, easing = LinearEasing),
+            animation = tween(pulseDuration, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse // Sube y baja suavemente
         ),
         label = "flash_alpha"
