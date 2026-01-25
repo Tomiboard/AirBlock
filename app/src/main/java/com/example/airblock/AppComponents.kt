@@ -44,7 +44,6 @@ fun ModeIcons(
     textColor: Color,
     pulseDuration: Int,
     iconText: String,
-
 ) {
 
 // 1. CONFIGURACIÓN DEL PARPADEO (ALERTA)

@@ -1,30 +1,19 @@
 package com.example.airblock
 
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -107,18 +96,21 @@ fun AirBlockHomeScreen() {
 
             Button(
                 onClick = { /*AirBlockState.hasTagRegistered = !AirBlockState.hasTagRegistered*/
-                when {
+                    when {
 
-                        !AirBlockState.hasTagRegistered -> AirBlockState.hasTagRegistered = !AirBlockState.hasTagRegistered
+                        !AirBlockState.hasTagRegistered -> AirBlockState.hasTagRegistered =
+                            !AirBlockState.hasTagRegistered
                         // lock open
-                    AirBlockState.hasTagRegistered && !AirBlockState.isLocked -> AirBlockState.isLocked = !AirBlockState.isLocked
+                        AirBlockState.hasTagRegistered && !AirBlockState.isLocked -> AirBlockState.isLocked =
+                            !AirBlockState.isLocked
                         // lock
-                        else -> {AirBlockState.hasTagRegistered = !AirBlockState.hasTagRegistered
+                        else -> {
+                            AirBlockState.hasTagRegistered = !AirBlockState.hasTagRegistered
                             AirBlockState.isLocked = !AirBlockState.isLocked
                         }
 
-                }
-},
+                    }
+                },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(
                         id = R.color.button_surface
