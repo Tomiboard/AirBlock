@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -16,6 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -38,24 +42,57 @@ fun AirBlockHomeScreen() {
         painterResource(id = R.drawable.lock_open_24)
     }
 
+    val iconColor = if (!AirBlockState.hasTagRegistered) {
+        colorResource(id = R.color.no_tag_yellow)
+    } else {
+        colorResource(id = R.color.unlock_red)
+    }
+
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(color = colorResource(id = R.color.dark_background))
+            .background(iconColor.copy(alpha = 0.04f))
     ) {
+
 
         Icon(
             painter = finalPainter,
-            contentDescription = "Don't have tag",
+            contentDescription = "mode icon",
             modifier = Modifier
                 .size(240.dp)
                 .align(Alignment.Center)
-                .offset(y = (-150).dp),
-            tint = if (!AirBlockState.hasTagRegistered) {
-                colorResource(id = R.color.no_tag_yellow)
-            } else {
-                colorResource(id = R.color.unlock_red)
-            }
+                .offset(y = (-150).dp)
+                .drawBehind { // Neon efect
+
+                    val shadowSizeMultiplier = 2f
+                    val shadowRadius = (size.maxDimension) / 2 * shadowSizeMultiplier
+
+                    val shadowBrush = Brush.radialGradient(
+                        colorStops = arrayOf(
+
+                            0.0f to iconColor.copy(alpha = 0.3f),
+
+                            0.5f to iconColor.copy(alpha = 0.1f),
+
+                            0.85f to iconColor.copy(alpha = 0.05f),
+
+                            // Borde final transparente
+                            1.0f to Color.Transparent
+                        ),
+                        center = center,
+                        radius = shadowRadius
+                    )
+
+                    drawCircle(
+                        brush = shadowBrush,
+                        radius = shadowRadius,
+                        center = center
+                    )
+                },
+
+            tint = iconColor
         )
 
 
@@ -66,7 +103,7 @@ fun AirBlockHomeScreen() {
         ) {
 
             Button(
-                onClick = { AirBlockState.hasTagRegistered = true },
+                onClick = { AirBlockState.hasTagRegistered = !AirBlockState.hasTagRegistered },
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(
                         id = R.color.button_surface

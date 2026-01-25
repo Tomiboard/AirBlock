@@ -18,7 +18,6 @@
     // Lock, unlock, no tag
     <color name="unlock_red">#FFFF2A2A</color>
     <color name="lock_green">#FF00E676</color>
-    <color name="no_tag_yellow">#FFFFD600</color>
-
+    <color name="no_tag_yellow">#FFD600</color>
 
 </resources>
