@@ -39,35 +39,50 @@ import com.example.airblock.ui.theme.AirBlockTheme
 fun AirBlockHomeScreen() {
 
     // Vectors
-    val finalPainter = if (!AirBlockState.hasTagRegistered) {
-        // CASO 1: Sensor
-        painterResource(id = R.drawable.sensors_24)
-    } else {
-        // CASO 2: lock open
-        painterResource(id = R.drawable.lock_open_24)
+    val finalIcon = when {
+        // Sensor
+        !AirBlockState.hasTagRegistered -> painterResource(id = R.drawable.sensors_24)
+        // lock open
+        !AirBlockState.isLocked -> painterResource(id = R.drawable.lock_open_24)
+        // lock
+        else -> painterResource(id = R.drawable.lock_closed_24)
     }
 
-    val iconColor = if (!AirBlockState.hasTagRegistered) {
-        colorResource(id = R.color.no_tag_yellow)
-    } else {
-        colorResource(id = R.color.unlock_red)
+    val iconColor = when {
+        // Sensor
+        !AirBlockState.hasTagRegistered -> colorResource(id = R.color.no_tag_yellow)
+        // lock open
+        !AirBlockState.isLocked -> colorResource(id = R.color.unlock_red)
+        // lock
+        else -> colorResource(id = R.color.lock_green)
+
     }
 
-    val pulseDuration = if(!AirBlockState.hasTagRegistered) 2000 else 500
+    val textColor = when {
+        // Sensor
+        !AirBlockState.hasTagRegistered -> colorResource(id = R.color.no_tag_yellow_text)
+        // lock open
+        !AirBlockState.isLocked -> colorResource(id = R.color.unlock_red_text)
+        // lock
+        else -> colorResource(id = R.color.lock_green_text)
 
-// 1. CONFIGURACIÓN DEL PARPADEO (ALERTA)
-    val infiniteTransition = rememberInfiniteTransition(label = "screen_flash")
+    }
 
-    val flashAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.05f, // min intensity
-        targetValue = 0.25f,  // max intensity
-        animationSpec = infiniteRepeatable(
-            // expansion time
-            animation = tween(pulseDuration, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse // Sube y baja suavemente
-        ),
-        label = "flash_alpha"
-    )
+    val pulseDuration = when {
+        !AirBlockState.hasTagRegistered -> 2000
+        // lock open
+        !AirBlockState.isLocked -> 1500
+        // lock
+        else -> 4000
+    }
+
+    val iconText = when {
+        !AirBlockState.hasTagRegistered -> stringResource(id = R.string.no_tag)
+        // lock open
+        !AirBlockState.isLocked -> stringResource(id = R.string.unlocked)
+        // lock
+        else -> stringResource(id = R.string.locked)
+    }
 
     Box(
         modifier = Modifier
@@ -76,58 +91,7 @@ fun AirBlockHomeScreen() {
             .background(iconColor.copy(alpha = 0.04f))
     ) {
 
-// 2. EL BOX PRINCIPAL CON EL FONDO ANIMADO
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                // Capa 1: Fondo Negro Sólido
-                .background(Color.Black)
-                // Capa 2: El tinte que parpadea
-                .background(
-                    // 👇 Aquí usamos el valor animado 'flashAlpha'
-                    color = iconColor.copy(alpha = flashAlpha)
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-
-            Icon(
-                painter = finalPainter,
-                contentDescription = "mode icon",
-                modifier = Modifier
-                    .size(240.dp)
-                    .align(Alignment.Center)
-                    .offset(y = (-150).dp)
-                    .drawBehind { // Neon efect
-
-                        val shadowSizeMultiplier = 1.8f
-                        val shadowRadius = (size.maxDimension) / 2 * shadowSizeMultiplier
-
-                        val shadowBrush = Brush.radialGradient(
-                            colorStops = arrayOf(
-
-                                0.0f to iconColor.copy(alpha = 0.2f),
-
-                                0.5f to iconColor.copy(alpha = 0.1f),
-
-                                0.85f to iconColor.copy(alpha = 0.05f),
-
-                                // Borde final transparente
-                                1.0f to Color.Transparent
-                            ),
-                            center = center,
-                            radius = shadowRadius
-                        )
-
-                        drawCircle(
-                            brush = shadowBrush,
-                            radius = shadowRadius,
-                            center = center
-                        )
-                    },
-
-                tint = iconColor
-            )
-        }
+        ModeIcons()
 
         Column(
             modifier = Modifier
@@ -136,7 +100,19 @@ fun AirBlockHomeScreen() {
         ) {
 
             Button(
-                onClick = { AirBlockState.hasTagRegistered = !AirBlockState.hasTagRegistered },
+                onClick = { /*AirBlockState.hasTagRegistered = !AirBlockState.hasTagRegistered*/
+                when {
+
+                        !AirBlockState.hasTagRegistered -> AirBlockState.hasTagRegistered = !AirBlockState.hasTagRegistered
+                        // lock open
+                    AirBlockState.hasTagRegistered && !AirBlockState.isLocked -> AirBlockState.isLocked = !AirBlockState.isLocked
+                        // lock
+                        else -> {AirBlockState.hasTagRegistered = !AirBlockState.hasTagRegistered
+                            AirBlockState.isLocked = !AirBlockState.isLocked
+                        }
+
+                }
+},
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(
                         id = R.color.button_surface

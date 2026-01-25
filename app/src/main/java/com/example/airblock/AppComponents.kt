@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -36,7 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ModeIcons() {
+fun ModeIcons(
+
+) {
 
 
     // Vectors
@@ -72,23 +75,10 @@ fun ModeIcons() {
     val pulseDuration = when {
         !AirBlockState.hasTagRegistered -> 2000
         // lock open
-        !AirBlockState.isLocked -> 500
+        !AirBlockState.isLocked -> 1500
         // lock
         else -> 4000
     }
-// 1. CONFIGURACIÓN DEL PARPADEO (ALERTA)
-    val infiniteTransition = rememberInfiniteTransition(label = "screen_flash")
-
-    val flashAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.05f, // min intensity
-        targetValue = 0.25f,  // max intensity
-        animationSpec = infiniteRepeatable(
-            // expansion time
-            animation = tween(pulseDuration, easing = LinearEasing),
-            repeatMode = RepeatMode.Reverse // Sube y baja suavemente
-        ),
-        label = "flash_alpha"
-    )
 
     val iconText = when {
         !AirBlockState.hasTagRegistered -> stringResource(id = R.string.no_tag)
@@ -98,6 +88,20 @@ fun ModeIcons() {
         else -> stringResource(id = R.string.locked)
     }
 
+// 1. CONFIGURACIÓN DEL PARPADEO (ALERTA)
+    key(pulseDuration) {
+        val infiniteTransition = rememberInfiniteTransition(label = "screen_flash")
+
+        val flashAlpha by infiniteTransition.animateFloat(
+            initialValue = 0.05f, // min intensity
+            targetValue = 0.25f,  // max intensity
+            animationSpec = infiniteRepeatable(
+                // expansion time
+                animation = tween(pulseDuration, easing = LinearEasing),
+                repeatMode = RepeatMode.Reverse // Sube y baja suavemente
+            ),
+            label = "flash_alpha"
+        )
 
     Box(
         modifier = Modifier
@@ -179,10 +183,11 @@ fun ModeIcons() {
     }
 
 }
+}
 
 @Preview
 @Composable
-fun modeIconsPreview() {
+fun ModeIconsPreview() {
     ModeIcons()
 
 }
