@@ -57,86 +57,110 @@ fun ModeIcons(
             label = "flash_alpha"
         )
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            // Capa 1: Fondo Negro Sólido
-            .background(Color.Black)
-            // Capa 2: El tinte que parpadea
-            .background(
-                // 👇 Aquí usamos el valor animado 'flashAlpha'
-                color = iconColor.copy(alpha = flashAlpha)
-            ),
-        contentAlignment = Alignment.Center
-    ) {
-
-        Column(
+        Box(
             modifier = Modifier
-                .align(Alignment.Center)
-                .offset(y = (-150).dp)
-        ) {
-            Icon(
-                painter = finalIcon,
-                contentDescription = "mode icon",
-                modifier = Modifier
-                    .size(240.dp)
-                    //.align(Alignment.Center)
-                    //.offset(y = (-150).dp)
-                    .drawBehind { // Neon efect
-
-                        val shadowSizeMultiplier = 1.8f
-                        val shadowRadius = (size.maxDimension) / 2 * shadowSizeMultiplier
-
-                        val shadowBrush = Brush.radialGradient(
-                            colorStops = arrayOf(
-
-                                0.0f to iconColor.copy(alpha = 0.2f),
-
-                                0.5f to iconColor.copy(alpha = 0.1f),
-
-                                0.85f to iconColor.copy(alpha = 0.05f),
-
-                                // Borde final transparente
-                                1.0f to Color.Transparent
-                            ),
-                            center = center,
-                            radius = shadowRadius
-                        )
-
-                        drawCircle(
-                            brush = shadowBrush,
-                            radius = shadowRadius,
-                            center = center
-                        )
-                    },
-
-                tint = iconColor
-            )
-            Text(
-                text = iconText,
-                color = textColor,
-                fontSize = 34.sp,
-                textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontFamily = FontFamily.Default, // Esto usa Roboto en Android
-                    fontWeight = FontWeight.Black,   // O FontWeight.Bold
-                    fontSize = 24.sp,
-                    letterSpacing = 2.sp, // 👈 Esto le da el toque "Premium/Cine"
-                    // El efecto de brillo/borroso de la imagen:
-                    shadow = Shadow(
-                        color = iconColor,
-                        blurRadius = 15f
-                    )
+                .fillMaxSize()
+                // Capa 1: Fondo Negro Sólido
+                .background(Color.Black)
+                // Capa 2: El tinte que parpadea
+                .background(
+                    // 👇 Aquí usamos el valor animado 'flashAlpha'
+                    color = iconColor.copy(alpha = flashAlpha)
                 ),
-                modifier = Modifier
-                    .padding(top = 30.dp)
-                    .align(Alignment.CenterHorizontally)
-                    .width(240.dp),
-            )
-        }
-    }
+            contentAlignment = Alignment.Center
+        ) {
 
+            Column(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .offset(y = (-150).dp)
+            ) {
+                Icon(
+                    painter = finalIcon,
+                    contentDescription = "mode icon",
+                    modifier = Modifier
+                        .size(240.dp)
+                        //.align(Alignment.Center)
+                        //.offset(y = (-150).dp)
+                        .drawBehind { // Neon efect
+
+                            val shadowSizeMultiplier = 1.8f
+                            val shadowRadius = (size.maxDimension) / 2 * shadowSizeMultiplier
+
+                            val shadowBrush = Brush.radialGradient(
+                                colorStops = arrayOf(
+
+                                    0.0f to iconColor.copy(alpha = 0.2f),
+
+                                    0.5f to iconColor.copy(alpha = 0.1f),
+
+                                    0.85f to iconColor.copy(alpha = 0.05f),
+
+                                    // Borde final transparente
+                                    1.0f to Color.Transparent
+                                ),
+                                center = center,
+                                radius = shadowRadius
+                            )
+
+                            drawCircle(
+                                brush = shadowBrush,
+                                radius = shadowRadius,
+                                center = center
+                            )
+                        },
+
+                    tint = iconColor
+                )
+                Text(
+                    text = iconText,
+                    color = textColor,
+                    fontSize = 34.sp,
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(
+                        fontFamily = FontFamily.Default, // Esto usa Roboto en Android
+                        fontWeight = FontWeight.Black,   // O FontWeight.Bold
+                        fontSize = 24.sp,
+                        letterSpacing = 2.sp, // 👈 Esto le da el toque "Premium/Cine"
+                        // El efecto de brillo/borroso de la imagen:
+                        shadow = Shadow(
+                            color = iconColor,
+                            blurRadius = 15f
+                        )
+                    ),
+                    modifier = Modifier
+                        .padding(top = 30.dp)
+                        .align(Alignment.CenterHorizontally)
+                        .width(240.dp),
+                )
+            }
+        }
+
+    }
 }
+
+@Composable
+fun TimerScreen(timerText: String) {
+
+    Text(
+        text = timerText,
+        color = Color.White,
+        fontSize = 52.sp,
+        textAlign = TextAlign.Center,
+        style = TextStyle(
+            fontFamily = FontFamily.Default, // Esto usa Roboto en Android
+            fontWeight = FontWeight.Black,
+            letterSpacing = 2.sp, // 👈 Esto le da el toque "Premium/Cine"
+            // El efecto de brillo/borroso de la imagen:
+            shadow = Shadow(
+                color = Color.Green,
+                blurRadius = 15f
+            )
+        ),
+        modifier = Modifier
+            .width(240.dp),
+    )
+
 }
 
 /*
