@@ -1,6 +1,7 @@
 package com.example.airblock
 
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.airblock.ui.theme.AirBlockTheme
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.time.delay
 
 
 @Composable
@@ -146,6 +146,7 @@ fun rememberStopwatch(isRunning: Boolean): String {
     return formatTime(timeMillis)
 }
 
+@SuppressLint("DefaultLocale")
 fun formatTime(millis: Long): String {
     val totalSeconds = millis / 1000
     val minutes = totalSeconds / 60

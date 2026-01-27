@@ -145,7 +145,7 @@ fun TimerScreen(timerText: String) {
     Text(
         text = timerText,
         color = Color.White,
-        fontSize = 52.sp,
+        fontSize = 64.sp,
         textAlign = TextAlign.Center,
         style = TextStyle(
             fontFamily = FontFamily.Default, // Esto usa Roboto en Android

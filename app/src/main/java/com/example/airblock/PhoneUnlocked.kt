@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 
@@ -33,7 +34,8 @@ fun PhoneUnLocked() {
 
     ) {
         Text(
-            text =  stringResource(id = R.string.btn_manage)
+            text =  stringResource(id = R.string.btn_manage),
+            color = Color.White
         )
     }
 }
