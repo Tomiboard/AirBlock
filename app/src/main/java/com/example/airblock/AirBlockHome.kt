@@ -6,6 +6,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -82,12 +84,25 @@ fun AirBlockHomeScreen() {
             .background(iconColor.copy(alpha = 0.04f))
     ) {
 
+
+
         ModeIcons(
             finalIcon = finalIcon,
             iconColor = iconColor,
             textColor = textColor,
             pulseDuration = pulseDuration,
             iconText = iconText
+        )
+
+        Icon(
+            painter = painterResource(id = R.drawable.settings_24dp),
+            contentDescription = "mode icon",
+            modifier = Modifier
+                .padding(10.dp)
+                .size(50.dp)
+                .align(Alignment.TopEnd)
+
+
         )
 
         Box(

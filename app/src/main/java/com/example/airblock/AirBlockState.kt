@@ -10,4 +10,6 @@ object AirBlockState   {
 
     var timerActivated by mutableStateOf(false)
 
+    var registeredTagId: String? = null
+
 }
