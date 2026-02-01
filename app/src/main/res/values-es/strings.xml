@@ -9,4 +9,7 @@
     <string name="no_tag">AIRBLOCK EN ESPERA</string>
     <string name="unlocked">AIRBLOCK INACTIVO</string>
     <string name="locked">AIRBLOCK ACTIVO</string>
+    <string name="nfc_tag_detected">✅ Tag detectado</string>
+    <string name="nfc_tag_registered">✅ Tag registrado con éxito</string>
+    <string name="wrong_nfc_tag_detected">⛔ Tag incorrecto</string>
 </resources>

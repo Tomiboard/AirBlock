@@ -29,6 +29,9 @@ class MainActivity : ComponentActivity() {
         }
 
         AirBlockState.isLocked = TagStorage.getLockState(this)
+        if(AirBlockState.isLocked){
+            AirBlockState.startTime = TagStorage.getStartTime(this)
+        }
 
         setContent {
             AirBlockTheme {
@@ -68,7 +71,7 @@ class MainActivity : ComponentActivity() {
 
                     TagStorage.saveTag(this, scannedId)
 
-                    Toast.makeText(this, "✅ Tag Registrado con éxito", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.nfc_tag_registered, Toast.LENGTH_SHORT).show()
                 }
 
                 // CASO 2: YA hay un tag registrado (Modo Seguridad)
@@ -79,11 +82,11 @@ class MainActivity : ComponentActivity() {
                         // ¡COINCIDEN! Es la llave correcta -> Accionamos
                         AirBlockState.isLocked = !AirBlockState.isLocked
                         TagStorage.saveLockState(this, AirBlockState.isLocked)
-                        Toast.makeText(this, "Acceso Autorizado 🔓", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, R.string.nfc_tag_detected, Toast.LENGTH_SHORT).show()
                     } else {
                         // NO COINCIDEN -> Es un intruso
                         // No guardamos nada, solo avisamos.
-                        Toast.makeText(this, "⛔ Tag Incorrecto", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, R.string.wrong_nfc_tag_detected, Toast.LENGTH_SHORT).show()
                     }
                 }
             }

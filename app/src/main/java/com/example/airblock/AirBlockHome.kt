@@ -80,7 +80,7 @@ fun AirBlockHomeScreen() {
         else -> stringResource(id = R.string.locked)
     }
 
-    val timerText = rememberStopwatch(AirBlockState.timerActivated)
+    val timerText = rememberStopwatch(AirBlockState.timerActivated, context)
 
 
     Box(
@@ -141,43 +141,39 @@ fun AirBlockHomeScreen() {
 
 }
 
+// Calculos para el temporizador
 @Composable
-fun rememberStopwatch(isRunning: Boolean): String {
-    // 1. ESTADO: Aquí guardamos el tiempo actual acumulado
+fun rememberStopwatch(isRunning: Boolean, context: Context): String {
     var timeMillis by remember { mutableLongStateOf(0L) }
 
-    // 2. MOTOR: Se enciende cuando 'isRunning' cambia
     LaunchedEffect(isRunning) {
         if (isRunning) {
-            // A. Marca el momento exacto de inicio
-            val startTime = System.currentTimeMillis()
 
-            // B. Bucle infinito (mientras isRunning siga siendo true)
+            // if there is alredy a start time saved we dont need to save current time
+            if(AirBlockState.startTime == 0L){
+                AirBlockState.startTime = System.currentTimeMillis()
+                TagStorage.saveStartTime(context, AirBlockState.startTime)
+            }
+
             while (true) {
-                // Calculamos la diferencia: (Hora Actual - Hora Inicio)
-                // Esto es más preciso que sumar +1 cada segundo
-                timeMillis = System.currentTimeMillis() - startTime
+                timeMillis = System.currentTimeMillis() - AirBlockState.startTime
 
-                // Esperamos un poquito para no quemar el procesador
-                // 100ms es suficiente para que se sienta fluido
                 delay(100)
             }
         } else {
-            // C. Si se apaga (isRunning = false), reseteamos a 0
             timeMillis = 0L
         }
     }
 
-    // 3. SALIDA: Usamos la función matemática de arriba
     return formatTime(timeMillis)
 }
 
+// sacar los segundos y miutos del tiempo
 @SuppressLint("DefaultLocale")
 fun formatTime(millis: Long): String {
     val totalSeconds = millis / 1000
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60
-    // %02d significa: "número de 2 dígitos, rellena con 0 si hace falta"
     return String.format("%02d:%02d", minutes, seconds)
 }
 

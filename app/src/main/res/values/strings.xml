@@ -11,4 +11,9 @@
     <string name="unlocked">AIRBLOCK DISABLED</string>
     <string name="locked">AIRBLOCK ACTIVE</string>
 
+    //Tag detection
+    <string name="nfc_tag_detected">✅ Tag detected</string>
+    <string name="nfc_tag_registered">✅ Tag registered successfully</string>
+    <string name="wrong_nfc_tag_detected">⛔ Wrong Tag</string>
+
 </resources>
