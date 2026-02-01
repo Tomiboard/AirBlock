@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun TagNotRegistered() {
 
-    Column() {
+    Column {
 
 
         Button(
