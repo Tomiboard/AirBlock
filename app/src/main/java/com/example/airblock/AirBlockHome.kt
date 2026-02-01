@@ -2,12 +2,14 @@ package com.example.airblock
 
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,10 +25,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.airblock.ui.theme.AirBlockTheme
 import kotlinx.coroutines.delay
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
 
 
 @Composable
 fun AirBlockHomeScreen() {
+
+    val context = LocalContext.current
 
     // Vectors
     val finalIcon = when {
@@ -94,16 +100,19 @@ fun AirBlockHomeScreen() {
             iconText = iconText
         )
 
-        Icon(
-            painter = painterResource(id = R.drawable.settings_24dp),
-            contentDescription = "mode icon",
+        IconButton(
+            onClick = { resetNfcTag(context) },
             modifier = Modifier
+                .align(Alignment.TopEnd) // Posición en la esquina (asumiendo que está en un Box)
                 .padding(10.dp)
-                .size(50.dp)
-                .align(Alignment.TopEnd)
-
-
-        )
+                .size(50.dp) // Tamaño del área clicable
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.settings_24dp),
+                contentDescription = "mode icon",
+                modifier = Modifier.size(50.dp),
+            )
+        }
 
         Box(
             modifier = Modifier
@@ -116,7 +125,9 @@ fun AirBlockHomeScreen() {
                     TagNotRegistered()
                 }
                 // lock open
-                !AirBlockState.isLocked -> PhoneUnLocked()
+                !AirBlockState.isLocked -> {PhoneUnLocked()
+                    AirBlockState.timerActivated = false
+                }
                 // lock
                 else -> {
                     AirBlockState.timerActivated = true
@@ -177,4 +188,14 @@ fun AirBlockHome() {
     AirBlockTheme {
         AirBlockHomeScreen()
     }
+}
+
+
+fun resetNfcTag(context: Context) {
+
+    AirBlockState.registeredTagId = null
+    AirBlockState.hasTagRegistered = false
+    AirBlockState.isLocked = false
+    TagStorage.clearTag(context)
+    Toast.makeText(context, "♻️ Memoria borrada", Toast.LENGTH_SHORT).show()
 }
