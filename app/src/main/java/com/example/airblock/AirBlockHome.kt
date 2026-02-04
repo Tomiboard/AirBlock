@@ -29,6 +29,12 @@ import android.content.Context
 import androidx.compose.ui.platform.LocalContext
 
 
+/**
+ * [RESUMEN]: Main UI entry point that orchestrates the screen navigation.
+ *  * Observes the [AirBlockState] and decides which screen to render
+ *  * (Locked, Unlocked, or Registration) based on the current app status
+ *
+ */
 @Composable
 fun AirBlockHomeScreen() {
 
