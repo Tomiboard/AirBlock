@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.example.airblock.ui.theme.AirBlockTheme
 import kotlinx.coroutines.delay
 import android.content.Context
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import com.example.airblock.ui.screens.ModeIcons
 import com.example.airblock.R
