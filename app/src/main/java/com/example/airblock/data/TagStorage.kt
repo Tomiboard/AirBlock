@@ -1,4 +1,4 @@
-package com.example.airblock
+package com.example.airblock.data
 
 import android.content.Context
 import androidx.core.content.edit
@@ -9,6 +9,9 @@ object TagStorage {
     private const val KEY_IS_LOCKED = "is_locked_state"
 
     private const val LOCKED_TIME = "locked_timestamp"
+
+    // Blocked apps
+    private const val KEY_BLOCKED_APPS = "blocked_apps_list"
 
 
     // 1. GUARDAR (Escribir en disco)
@@ -51,5 +54,18 @@ object TagStorage {
         val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         // Si no hay dato, devolvemos 0
         return prefs.getLong(LOCKED_TIME, 0L)
+    }
+
+    fun saveBlockedApps(context: Context, packageNames: Set<String>) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putStringSet(KEY_BLOCKED_APPS, packageNames).apply()
+    }
+
+    // RECUPERAR la lista
+    fun getBlockedApps(context: Context): MutableSet<String> {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        // Devolvemos un HashSet nuevo para evitar problemas de referencias
+        val savedSet = prefs.getStringSet(KEY_BLOCKED_APPS, emptySet()) ?: emptySet()
+        return savedSet.toMutableSet()
     }
 }

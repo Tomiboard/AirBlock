@@ -1,4 +1,4 @@
-package com.example.airblock
+package com.example.airblock.ui.screens
 
 import androidx.compose.runtime.Composable
 import androidx.compose.animation.core.LinearEasing

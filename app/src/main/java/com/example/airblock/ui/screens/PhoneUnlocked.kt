@@ -1,4 +1,4 @@
-package com.example.airblock
+package com.example.airblock.ui.screens
 
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
@@ -11,16 +11,20 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.airblock.R
+import com.example.airblock.state.AirBlockState
 
 @Composable
-fun PhoneUnLocked() {
+fun PhoneUnLocked(
+    onEditAppsClicked: () -> Unit
+) {
 
     Button(
-        onClick = { /*AirBlockState.hasTagRegistered = !AirBlockState.hasTagRegistered*/
-            AirBlockState.isLocked =
-                    !AirBlockState.isLocked
-
+        onClick = {
+            //AirBlockState.isLocked = !AirBlockState.isLocked
+            onEditAppsClicked()
         },
         colors = ButtonDefaults.buttonColors(
             containerColor = colorResource(
@@ -34,9 +38,11 @@ fun PhoneUnLocked() {
 
     ) {
         Text(
-            text =  stringResource(id = R.string.btn_manage),
+            text = stringResource(id = R.string.btn_manage),
             color = Color.White
         )
     }
 }
+
+
 
