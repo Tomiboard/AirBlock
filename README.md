@@ -107,7 +107,7 @@ classDiagram
 
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/TU_USUARIO/AirBlock.git](https://github.com/TU_USUARIO/AirBlock.git)
+    git clone [https://github.com/Tomiboard/AirBlock.git](https://github.com/Tomiboard/AirBlock.git)
     ```
 2.  **Open in Android Studio:**
     * Use Android Studio Ladybug (or newer).
