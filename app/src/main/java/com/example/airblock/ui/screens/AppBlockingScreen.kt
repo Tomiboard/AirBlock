@@ -1,13 +1,22 @@
-package com.tu.usuario.airblock.ui.screens
+package com.example.airblock.ui.screens
 
 import android.content.Context
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+// IMPORTS PARA GESTIONAR PANTALLA COMPLETA
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
+// ------------------------------------------
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,10 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.graphics.drawable.toBitmap
@@ -27,6 +38,11 @@ import com.example.airblock.data.TagStorage
 import com.example.airblock.state.AirBlockState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.ui.tooling.preview.Preview
+
 
 // Modelo de datos
 data class AppInfo(
@@ -41,6 +57,7 @@ fun AppBlockingScreen(
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
 
     // --- TUS COLORES DEL XML ---
     val bgDark = colorResource(id = R.color.dark_background)
@@ -48,10 +65,13 @@ fun AppBlockingScreen(
     val textGray = colorResource(id = R.color.text_gray)
     val faintWhite = colorResource(id = R.color.faint_white)
 
-    // Estado
+    // Estados
     var installedApps by remember { mutableStateOf<List<AppInfo>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
+    var searchQuery by remember { mutableStateOf("") }
 
+
+    // Carga inicial
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
             installedApps = getInstalledApps(context)
@@ -59,74 +79,173 @@ fun AppBlockingScreen(
         }
     }
 
-    Scaffold(
-        containerColor = bgDark, // Fondo #121212
-        topBar = {
-            TopAppBar(
-                title = {
+    // --- LÓGICA DE FILTRADO Y SELECCIÓN ---
+    val filteredApps = if (searchQuery.isEmpty()) {
+        installedApps
+    } else {
+        installedApps.filter {
+            it.name.contains(searchQuery, ignoreCase = true) ||
+                    it.packageName.contains(searchQuery, ignoreCase = true)
+        }
+    }
+
+    val allSelected = filteredApps.isNotEmpty() && filteredApps.all {
+        AirBlockState.blockedApps.contains(it.packageName)
+    }
+
+    // 👇 AQUÍ ESTÁ EL CAMBIO: SURFACE EN LUGAR DE SCAFFOLD
+    // Surface ocupa toda la pantalla y la pinta de negro, tapando lo de atrás.
+
+        Column(modifier = Modifier.fillMaxSize()
+            .background(color = bgDark),
+            ) {
+
+            // 1. ESPACIO PARA LA BARRA DE ESTADO (HORA/BATERÍA)
+            // Esto evita que el título se meta debajo de la cámara
+            Spacer(modifier = Modifier.windowInsetsTopHeight(WindowInsets.statusBars))
+
+            // 2. CABECERA (NO SE MUEVE)
+            Column(modifier = Modifier.background(bgDark)) {
+                // A. TÍTULO
+                TopAppBar(
+                    title = {
+                        Text(
+                            "TARGET_SELECTOR //",
+                            style = TextStyle(
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                letterSpacing = 1.sp,
+                                color = Color.White
+                            )
+                        )
+                    },
+                    navigationIcon = {
+                        TextButton(onClick = onBack) {
+                            Text(
+                                "< BACK",
+                                color = accentRed,
+                                fontFamily = FontFamily.Monospace,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = bgDark,
+                        titleContentColor = Color.White
+                    )
+                )
+
+                // B. BUSCADOR
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    placeholder = {
+                        Text(
+                            "Search module...",
+                            color = textGray,
+                            fontFamily = FontFamily.Monospace
+                        )
+                    },
+                    leadingIcon = {
+                        Icon(Icons.Filled.Search, contentDescription = null, tint = textGray)
+                    },
+                    trailingIcon = {
+                        if (searchQuery.isNotEmpty()) {
+                            IconButton(onClick = { searchQuery = "" }) {
+                                Icon(
+                                    Icons.Filled.Close,
+                                    contentDescription = "Clear",
+                                    tint = textGray
+                                )
+                            }
+                        }
+                    },
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = accentRed,
+                        unfocusedBorderColor = textGray,
+                        cursorColor = accentRed,
+                        focusedTextColor = Color.White,
+                        unfocusedTextColor = Color.White
+                    ),
+                    textStyle = TextStyle(fontFamily = FontFamily.Monospace),
+                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
+                )
+
+                // C. SELECT ALL
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            toggleAll(context, filteredApps, !allSelected)
+                        }
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
-                        "TARGET_SELECTOR //", // Estilo Terminal
+                        text = if (allSelected) "[ DESELECT ALL ]" else "[ SELECT ALL ]",
                         style = TextStyle(
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            letterSpacing = 1.sp,
-                            color = Color.White
+                            color = if (allSelected) accentRed else textGray
+                        ),
+                        modifier = Modifier.weight(1f)
+                    )
+                    Checkbox(
+                        checked = allSelected,
+                        onCheckedChange = { isChecked ->
+                            toggleAll(context, filteredApps, isChecked)
+                        },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = accentRed,
+                            checkmarkColor = Color.Black,
+                            uncheckedColor = textGray
                         )
                     )
-                },
-                navigationIcon = {
-                    // Botón de texto estilo hacker
-                    TextButton(onClick = onBack) {
-                        Text(
-                            "< BACK",
-                            color = accentRed,
-                            fontFamily = FontFamily.Monospace,
-                            fontWeight = FontWeight.Bold
+                }
+
+                HorizontalDivider(color = accentRed, thickness = 1.dp)
+            }
+
+            // 3. CONTENIDO (LA LISTA)
+            if (isLoading) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = accentRed)
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.weight(1f), // Ocupa todo el espacio restante
+                    // Calculamos el espacio inferior para que la lista pase POR DEBAJO de los botones
+                    // pero el último elemento tenga margen para leerse.
+                    contentPadding = PaddingValues(
+                        bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 80.dp
+                    )
+                ) {
+                    items(filteredApps) { app ->
+                        CyberAppItemRow(
+                            app = app,
+                            accentColor = accentRed,
+                            textColor = textGray
+                        )
+
+                        HorizontalDivider(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            thickness = 0.5.dp,
+                            color = faintWhite
                         )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = bgDark,
-                    titleContentColor = Color.White
-                )
-            )
-        }
-    ) { paddingValues ->
-
-        if (isLoading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                // Spinner Rojo
-                CircularProgressIndicator(color = accentRed)
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                items(installedApps) { app ->
-                    CyberAppItemRow(
-                        app = app,
-                        accentColor = accentRed,
-                        textColor = textGray
-                    )
-
-                    // Línea divisoria muy fina (faint_white)
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        thickness = 0.5.dp,
-                        color = faintWhite
-                    )
                 }
             }
         }
-    }
+
 }
 
 @Composable
@@ -147,7 +266,6 @@ fun CyberAppItemRow(
             .padding(vertical = 12.dp, horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // 1. Icono
         if (app.icon != null) {
             Image(
                 bitmap = app.icon.toBitmap().asImageBitmap(),
@@ -155,20 +273,20 @@ fun CyberAppItemRow(
                 modifier = Modifier.size(42.dp)
             )
         } else {
-            // Placeholder si no hay icono
-            Box(modifier = Modifier.size(42.dp).background(Color.DarkGray))
+            Box(modifier = Modifier
+                .size(42.dp)
+                .background(Color.DarkGray))
         }
 
         Spacer(modifier = Modifier.width(16.dp))
 
-        // 2. Textos (Estilo Consola)
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = app.name,
                 style = TextStyle(
                     fontFamily = FontFamily.Monospace,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White, // Nombre en blanco brillante
+                    color = Color.White,
                     fontSize = 16.sp
                 )
             )
@@ -176,30 +294,30 @@ fun CyberAppItemRow(
                 text = app.packageName,
                 style = TextStyle(
                     fontFamily = FontFamily.Monospace,
-                    color = textColor, // Package name en gris (text_gray)
+                    color = textColor,
                     fontSize = 10.sp
                 ),
                 maxLines = 1
             )
         }
 
-        // 3. Checkbox Personalizado
         Checkbox(
             checked = isBlocked,
             onCheckedChange = { isChecked ->
                 toggleAppBlock(context, app.packageName, isChecked)
             },
             colors = CheckboxDefaults.colors(
-                checkedColor = accentColor,      // Rojo (unlock_red) al marcar
-                checkmarkColor = Color.Black,    // Tick negro para contraste
-                uncheckedColor = textColor,      // Borde gris al estar desmarcado
+                checkedColor = accentColor,
+                checkmarkColor = Color.Black,
+                uncheckedColor = textColor,
                 disabledCheckedColor = accentColor.copy(alpha = 0.6f)
             )
         )
     }
 }
 
-// Lógica auxiliar para guardar
+// --- FUNCIONES AUXILIARES ---
+
 fun toggleAppBlock(context: Context, packageName: String, shouldBlock: Boolean) {
     if (shouldBlock) {
         AirBlockState.blockedApps.add(packageName)
@@ -209,18 +327,32 @@ fun toggleAppBlock(context: Context, packageName: String, shouldBlock: Boolean) 
     TagStorage.saveBlockedApps(context, AirBlockState.blockedApps.toSet())
 }
 
-// Lógica de carga de apps
+fun toggleAll(context: Context, apps: List<AppInfo>, shouldSelect: Boolean) {
+    val visiblePackages = apps.map { it.packageName }
+
+    if (shouldSelect) {
+        AirBlockState.blockedApps.addAll(visiblePackages)
+    } else {
+        AirBlockState.blockedApps.removeAll(visiblePackages.toSet())
+    }
+
+    val unique = AirBlockState.blockedApps.toSet()
+    AirBlockState.blockedApps.clear()
+    AirBlockState.blockedApps.addAll(unique)
+    TagStorage.saveBlockedApps(context, unique)
+}
+
 fun getInstalledApps(context: Context): List<AppInfo> {
     val pm = context.packageManager
     val apps = pm.getInstalledPackages(0)
-
     val myPackageName = context.packageName
 
     val filteredApps = mutableListOf<AppInfo>()
 
     for (app in apps) {
         if (pm.getLaunchIntentForPackage(app.packageName) != null
-            && app.packageName != myPackageName) {
+            && app.packageName != myPackageName
+        ) {
             val name = app.applicationInfo?.loadLabel(pm).toString()
             val icon = app.applicationInfo?.loadIcon(pm)
 
@@ -230,4 +362,10 @@ fun getInstalledApps(context: Context): List<AppInfo> {
         }
     }
     return filteredApps.sortedBy { it.name.lowercase() }
+}
+
+@Preview
+@Composable
+fun preview(){
+    AppBlockingScreen(onBack = {})
 }

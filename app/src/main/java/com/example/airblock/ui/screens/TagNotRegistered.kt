@@ -64,7 +64,8 @@ fun TagNotRegistered() {
             color = Color.Gray,
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(bottom = 100.dp),
             textAlign = TextAlign.Center,
         )
 

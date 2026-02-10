@@ -31,11 +31,10 @@ import com.example.airblock.ui.screens.ModeIcons
 import com.example.airblock.R
 import com.example.airblock.data.TagStorage
 import com.example.airblock.state.AirBlockState
-import com.example.airblock.state.AirBlockState.isEditingApps
 import com.example.airblock.ui.screens.PhoneLocked
 import com.example.airblock.ui.screens.PhoneUnLocked
 import com.example.airblock.ui.screens.TagNotRegistered
-import com.tu.usuario.airblock.ui.screens.AppBlockingScreen
+import com.example.airblock.ui.screens.AppBlockingScreen
 
 
 /**
@@ -134,12 +133,12 @@ fun AirBlockHomeScreen() {
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(bottom = 100.dp)
+                //.padding(bottom = 100.dp)
         ) {
             when {
                 AirBlockState.isEditingApps -> {
                     AppBlockingScreen(
-                        onBack = { isEditingApps = false } // Al volver, APAGAMOS el interruptor
+                        onBack = { AirBlockState.isEditingApps = false } // Al volver, APAGAMOS el interruptor
                     )
                 }
                 !AirBlockState.hasTagRegistered -> {
@@ -150,7 +149,7 @@ fun AirBlockHomeScreen() {
                 !AirBlockState.isLocked -> {
                     PhoneUnLocked(onEditAppsClicked = {
                         // Esta es la lógica real: Cambiar el estado a true
-                        isEditingApps = true
+                        AirBlockState.isEditingApps = true
                     })
                     AirBlockState.timerActivated = false
                 }

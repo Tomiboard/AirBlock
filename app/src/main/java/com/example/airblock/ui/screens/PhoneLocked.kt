@@ -45,7 +45,7 @@ fun PhoneLocked(timerText: String) {
                 )
             ),
             modifier = Modifier
-                .padding(bottom = 30.dp)
+                .padding(bottom = 130.dp)
                 .width(250.dp)
                 .height(50.dp)
 
