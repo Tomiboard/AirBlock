@@ -214,10 +214,13 @@ fun getInstalledApps(context: Context): List<AppInfo> {
     val pm = context.packageManager
     val apps = pm.getInstalledPackages(0)
 
+    val myPackageName = context.packageName
+
     val filteredApps = mutableListOf<AppInfo>()
 
     for (app in apps) {
-        if (pm.getLaunchIntentForPackage(app.packageName) != null) {
+        if (pm.getLaunchIntentForPackage(app.packageName) != null
+            && app.packageName != myPackageName) {
             val name = app.applicationInfo?.loadLabel(pm).toString()
             val icon = app.applicationInfo?.loadIcon(pm)
 
