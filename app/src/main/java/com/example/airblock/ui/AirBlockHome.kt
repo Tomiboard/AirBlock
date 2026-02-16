@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.example.airblock.ui.theme.AirBlockTheme
 import kotlinx.coroutines.delay
 import android.content.Context
-import android.graphics.Color
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
@@ -35,7 +34,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import com.example.airblock.MainActivity
 import com.example.airblock.ui.screens.ModeIcons
 import com.example.airblock.R
 import com.example.airblock.data.TagStorage
@@ -48,12 +46,7 @@ import com.example.airblock.ui.screens.TagNotRegistered
 import com.example.airblock.ui.screens.AppBlockingScreen
 
 
-/**
- * [RESUMEN]: Main UI entry point that orchestrates the screen navigation.
- *  * Observes the [AirBlockState] and decides which screen to render
- *  * (Locked, Unlocked, or Registration) based on the current app status
- *
- */
+
 @Composable
 fun AirBlockHomeScreen() {
 
