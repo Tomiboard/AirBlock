@@ -1,8 +1,9 @@
 package com.example.airblock.ui.screens
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -357,18 +358,28 @@ fun getInstalledApps(context: Context): List<AppInfo> {
     val pm = context.packageManager
     val apps = pm.getInstalledPackages(0)
     val myPackageName = context.packageName
+    val defaultLauncher = getDefaultLauncherPackageName(context)
+
+    // Lista blanca dinámica (como la de Mindful)
+    val essentialApps = mutableSetOf<String>()
+    defaultLauncher?.let { essentialApps.add(it) }
+    essentialApps.add(myPackageName)
+    essentialApps.add("com.android.settings")
+    essentialApps.add("com.android.systemui")
+    essentialApps.add("com.google.android.googlequicksearchbox")
 
     val filteredApps = mutableListOf<AppInfo>()
 
     for (app in apps) {
-        if (pm.getLaunchIntentForPackage(app.packageName) != null
-            && !app.packageName.equals(myPackageName, ignoreCase = true)
-        ) {
+        val pkg = app.packageName
+
+        // FILTRO: Solo apps con icono Y que NO sean esenciales
+        if (pm.getLaunchIntentForPackage(pkg) != null && !essentialApps.contains(pkg)) {
             val name = app.applicationInfo?.loadLabel(pm).toString()
             val icon = app.applicationInfo?.loadIcon(pm)
 
             if (name.isNotEmpty()) {
-                filteredApps.add(AppInfo(name, app.packageName, icon))
+                filteredApps.add(AppInfo(name, pkg, icon))
             }
         }
     }
@@ -379,4 +390,12 @@ fun getInstalledApps(context: Context): List<AppInfo> {
 @Composable
 fun preview(){
     AppBlockingScreen(onBack = {})
+}
+
+// Función inspirada en Mindful para detectar el Launcher de cualquier marca
+fun getDefaultLauncherPackageName(context: Context): String? {
+    return context.packageManager.resolveActivity(
+        Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME),
+        PackageManager.MATCH_DEFAULT_ONLY
+    )?.activityInfo?.packageName
 }

@@ -1,6 +1,5 @@
 package com.example.airblock.ui.screens
 
-import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.colorResource
@@ -14,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.airblock.R
-import com.example.airblock.state.AirBlockState
 
 @Composable
 fun PhoneUnLocked(

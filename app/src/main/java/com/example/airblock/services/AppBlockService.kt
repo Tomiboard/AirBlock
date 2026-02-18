@@ -1,12 +1,12 @@
 package com.example.airblock.services
 
 import android.accessibilityservice.AccessibilityService
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.view.accessibility.AccessibilityEvent
 import com.example.airblock.MainActivity
 import com.example.airblock.state.AirBlockState
+import com.example.airblock.ui.screens.getDefaultLauncherPackageName
 
 class AppBlockService : AccessibilityService() {
 
@@ -14,32 +14,22 @@ class AppBlockService : AccessibilityService() {
         if (event?.eventType == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
             val packageName = event.packageName?.toString() ?: return
 
-            // 1. Detección dinámica del Launcher (Universal)
-            val defaultLauncher = getDefaultLauncher()
+            // 1. Obtener Launcher dinámico
+            val launcher = getDefaultLauncherPackageName(this)
 
-            // 2. Lista Blanca Híbrida
-            // Aquí combinamos nombres fijos universales + detecciones dinámicas
-            val isWhitelisted = packageName == this.packageName ||
-                    packageName == defaultLauncher ||
+            // 2. REGLA DE ORO: Ignorar procesos base y críticos
+            val isEssential = packageName == this.packageName ||
+                    packageName == launcher ||
                     packageName == "com.android.systemui" ||
-                    packageName == "com.android.settings" ||
                     packageName == "android" ||
-                    packageName.contains("googlequicksearchbox") ||
-                    // 🛡️ Filtros de seguridad por fabricante (Cubre el 99% de los móviles)
-                    packageName.startsWith("com.samsung.android.") ||
-                    packageName.startsWith("com.miui.") ||
-                    packageName.startsWith("com.huawei.") ||
-                    packageName.contains(".launcher", ignoreCase = true)
+                    packageName.startsWith("com.android.") ||
+                    packageName.startsWith("com.google.android.") ||
+                    packageName.startsWith("com.samsung.android.") // Mantenemos esto por seguridad en tu móvil actual
 
-            if (isWhitelisted) {
-                android.util.Log.d("AIRBLOCK_DEBUG", "Permitido por seguridad: $packageName")
-                return
-            }
+            if (isEssential) return
 
-            // 3. Lógica de Bloqueo
+            // 3. Bloqueo normal
             if (AirBlockState.isLocked && AirBlockState.blockedApps.contains(packageName)) {
-                android.util.Log.d("AIRBLOCK_DEBUG", "🛑 BLOQUEANDO: $packageName")
-
                 val intent = Intent(this, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 }
