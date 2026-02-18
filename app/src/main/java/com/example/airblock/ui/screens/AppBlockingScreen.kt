@@ -1,5 +1,6 @@
 package com.example.airblock.ui.screens
 
+import android.R.attr.duration
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -44,6 +45,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.*
+
 
 
 // Modelo de datos
@@ -73,17 +76,16 @@ fun AppBlockingScreen(
     var searchQuery by remember { mutableStateOf("") }
 
 
-    // Carga inicial
     LaunchedEffect(Unit) {
+        val t0 = System.currentTimeMillis() // ⏱️ Tiempo inicial
+
         withContext(Dispatchers.IO) {
             val apps = getInstalledApps(context)
-            val myPackage = context.packageName
+            val t1 = System.currentTimeMillis() // ⏱️ Tiempo final
 
-            // 🛡️ LIMPIEZA DE SEGURIDAD: Eliminar nuestra app de la lista cargada
-            if (AirBlockState.blockedApps.contains(myPackage)) {
-                AirBlockState.blockedApps.remove(myPackage)
-                TagStorage.saveBlockedApps(context, AirBlockState.blockedApps.toSet())
-            }
+            val totalMilis = t1 - t0 // 👈 LA RESTA ES LA CLAVE
+            android.util.Log.d("AIRBLOCK_PERF", "TIEMPO REAL DE CARGA: $totalMilis ms")
+
             installedApps = apps
             isLoading = false
         }
@@ -354,36 +356,48 @@ fun toggleAll(context: Context, apps: List<AppInfo>, shouldSelect: Boolean) {
     TagStorage.saveBlockedApps(context, unique)
 }
 
-fun getInstalledApps(context: Context): List<AppInfo> {
+
+suspend fun getInstalledApps(context: Context): List<AppInfo> = withContext(Dispatchers.IO) {
     val pm = context.packageManager
     val apps = pm.getInstalledPackages(0)
     val myPackageName = context.packageName
-    val defaultLauncher = getDefaultLauncherPackageName(context)
+    val launcher = getDefaultLauncherPackageName(context)
 
-    // Lista blanca dinámica (como la de Mindful)
-    val essentialApps = mutableSetOf<String>()
-    defaultLauncher?.let { essentialApps.add(it) }
-    essentialApps.add(myPackageName)
-    essentialApps.add("com.android.settings")
-    essentialApps.add("com.android.systemui")
-    essentialApps.add("com.google.android.googlequicksearchbox")
+    val essentialApps = setOf(
+        myPackageName,
+        launcher,
+        "com.android.settings",
+        "com.android.systemui",
+        "com.google.android.googlequicksearchbox"
+    )
 
-    val filteredApps = mutableListOf<AppInfo>()
-
-    for (app in apps) {
+    // 1. Filtramos primero la lista para no procesar apps que no vamos a mostrar
+    val validPackages = apps.filter { app ->
         val pkg = app.packageName
+        pm.getLaunchIntentForPackage(pkg) != null && !essentialApps.contains(pkg)
+    }
 
-        // FILTRO: Solo apps con icono Y que NO sean esenciales
-        if (pm.getLaunchIntentForPackage(pkg) != null && !essentialApps.contains(pkg)) {
-            val name = app.applicationInfo?.loadLabel(pm).toString()
-            val icon = app.applicationInfo?.loadIcon(pm)
+    // 2. Procesamos en paralelo usando 'async'
+    // Dividimos la carga de trabajo: cada app se procesa en un hilo del pool IO
+    val deferredApps = validPackages.map { app ->
+        async {
+            try {
+                val name = app.applicationInfo?.loadLabel(pm).toString()
+                val icon = app.applicationInfo?.loadIcon(pm)
 
-            if (name.isNotEmpty()) {
-                filteredApps.add(AppInfo(name, pkg, icon))
+                if (name.isNotEmpty()) {
+                    AppInfo(name, app.packageName, icon)
+                } else null
+            } catch (e: Exception) {
+                null
             }
         }
     }
-    return filteredApps.sortedBy { it.name.lowercase() }
+
+    // 3. Esperamos a que todas las tareas paralelas terminen y ordenamos
+    return@withContext deferredApps.awaitAll()
+        .filterNotNull()
+        .sortedBy { it.name.lowercase() }
 }
 
 @Preview
