@@ -2,6 +2,7 @@ package com.example.airblock.ui.screens
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -74,7 +75,15 @@ fun AppBlockingScreen(
     // Carga inicial
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            installedApps = getInstalledApps(context)
+            val apps = getInstalledApps(context)
+            val myPackage = context.packageName
+
+            // 🛡️ LIMPIEZA DE SEGURIDAD: Eliminar nuestra app de la lista cargada
+            if (AirBlockState.blockedApps.contains(myPackage)) {
+                AirBlockState.blockedApps.remove(myPackage)
+                TagStorage.saveBlockedApps(context, AirBlockState.blockedApps.toSet())
+            }
+            installedApps = apps
             isLoading = false
         }
     }
@@ -328,7 +337,9 @@ fun toggleAppBlock(context: Context, packageName: String, shouldBlock: Boolean) 
 }
 
 fun toggleAll(context: Context, apps: List<AppInfo>, shouldSelect: Boolean) {
+    val myPackage = context.packageName
     val visiblePackages = apps.map { it.packageName }
+        .filter { it != myPackage }
 
     if (shouldSelect) {
         AirBlockState.blockedApps.addAll(visiblePackages)
@@ -351,7 +362,7 @@ fun getInstalledApps(context: Context): List<AppInfo> {
 
     for (app in apps) {
         if (pm.getLaunchIntentForPackage(app.packageName) != null
-            && app.packageName != myPackageName
+            && !app.packageName.equals(myPackageName, ignoreCase = true)
         ) {
             val name = app.applicationInfo?.loadLabel(pm).toString()
             val icon = app.applicationInfo?.loadIcon(pm)
