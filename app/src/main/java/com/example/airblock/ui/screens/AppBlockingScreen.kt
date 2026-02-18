@@ -1,6 +1,5 @@
 package com.example.airblock.ui.screens
 
-import android.R.attr.duration
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -77,14 +76,15 @@ fun AppBlockingScreen(
 
 
     LaunchedEffect(Unit) {
-        val t0 = System.currentTimeMillis() // ⏱️ Tiempo inicial
-
         withContext(Dispatchers.IO) {
             val apps = getInstalledApps(context)
-            val t1 = System.currentTimeMillis() // ⏱️ Tiempo final
+            val myPackage = context.packageName
 
-            val totalMilis = t1 - t0 // 👈 LA RESTA ES LA CLAVE
-            android.util.Log.d("AIRBLOCK_PERF", "TIEMPO REAL DE CARGA: $totalMilis ms")
+            // no esté en la lista de bloqueadas al arrancar
+            if (AirBlockState.blockedApps.contains(myPackage)) {
+                AirBlockState.blockedApps.remove(myPackage)
+                TagStorage.saveBlockedApps(context, AirBlockState.blockedApps.toSet())
+            }
 
             installedApps = apps
             isLoading = false
