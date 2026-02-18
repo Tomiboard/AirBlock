@@ -1,6 +1,7 @@
 package com.example.airblock
 
 import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.nfc.NfcAdapter
@@ -12,6 +13,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import com.example.airblock.data.TagStorage
+import com.example.airblock.services.AppBlockService
 import com.example.airblock.state.AirBlockState
 import com.example.airblock.ui.AirBlockHomeScreen
 import com.example.airblock.ui.theme.AirBlockTheme
@@ -25,6 +27,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         val savedTag = TagStorage.getSavedTag(this)
+        AirBlockState.loadBlockedApps(this)
         if (savedTag != null) {
             // ¡Teníamos uno guardado! Lo restauramos en la RAM.
             AirBlockState.registeredTagId = savedTag
@@ -138,3 +141,19 @@ class MainActivity : ComponentActivity() {
 
 }
 
+// Función para verificar si el servicio está activo
+fun isAccessibilityServiceEnabled(context: Context): Boolean {
+    val service = "${context.packageName}/${AppBlockService::class.java.canonicalName}"
+    val enabledServices = android.provider.Settings.Secure.getString(
+        context.contentResolver,
+        android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+    )
+    return enabledServices?.contains(service) == true
+}
+
+// Función para mandar al usuario a los Ajustes
+fun openAccessibilitySettings(context: Context) {
+    val intent = Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS)
+    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    context.startActivity(intent)
+}

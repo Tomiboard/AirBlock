@@ -12,4 +12,10 @@
     <string name="nfc_tag_detected">✅ Tag detectado</string>
     <string name="nfc_tag_registered">✅ Tag registrado con éxito</string>
     <string name="wrong_nfc_tag_detected">⛔ Tag incorrecto</string>
+    <string name="accessibility_description">Servicio utilizado para bloquear las aplicaciones seleccionadas cuando AirBlock está activo.</string>
+    <string name="dialog_title">PERMISO_DEL_SISTEMA_REQUERIDO //</string>
+    <string name="dialog_content">Activa el servicio de firewall para comenzar el bloqueo.</string>
+    <string name="dialog_button">CONCEDER_ACCESO</string>
+    <string name="tag_eliminated">♻️ tag eliminado</string>
+
 </resources>

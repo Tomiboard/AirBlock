@@ -5,6 +5,8 @@
     <string name="dont_have_tag">No physical security key detected. Register a new NFC tag to arm the system.</string>
     <string name="buy_tag">Don\'t have a Tag? Get one here.</string>
     <string name="any_tag_info">Or use any standard NFC sticker, card or tag</string>
+    <string name="tag_eliminated">♻️ tag eliminated</string>
+
 
     // Icon text
     <string name="no_tag">AIRBLOCK STANDBY</string>
@@ -15,5 +17,12 @@
     <string name="nfc_tag_detected">✅ Tag detected</string>
     <string name="nfc_tag_registered">✅ Tag registered successfully</string>
     <string name="wrong_nfc_tag_detected">⛔ Wrong Tag</string>
+
+    <string name="accessibility_description">Service used to block selected apps when AirBlock is active.</string>
+
+    <string name="dialog_title">SYSTEM_PERMISSION_REQUIRED //</string>
+    <string name="dialog_content">Enable firewall service to start blocking.</string>
+    <string name="dialog_button">GRANT_ACCESS</string>
+
 
 </resources>

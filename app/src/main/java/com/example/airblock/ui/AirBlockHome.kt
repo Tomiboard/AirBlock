@@ -26,10 +26,19 @@ import androidx.compose.ui.unit.dp
 import com.example.airblock.ui.theme.AirBlockTheme
 import kotlinx.coroutines.delay
 import android.content.Context
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import com.example.airblock.ui.screens.ModeIcons
 import com.example.airblock.R
 import com.example.airblock.data.TagStorage
+import com.example.airblock.isAccessibilityServiceEnabled
+import com.example.airblock.openAccessibilitySettings
 import com.example.airblock.state.AirBlockState
 import com.example.airblock.ui.screens.PhoneLocked
 import com.example.airblock.ui.screens.PhoneUnLocked
@@ -37,15 +46,9 @@ import com.example.airblock.ui.screens.TagNotRegistered
 import com.example.airblock.ui.screens.AppBlockingScreen
 
 
-/**
- * [RESUMEN]: Main UI entry point that orchestrates the screen navigation.
- *  * Observes the [AirBlockState] and decides which screen to render
- *  * (Locked, Unlocked, or Registration) based on the current app status
- *
- */
+
 @Composable
 fun AirBlockHomeScreen() {
-
 
 
     val context = LocalContext.current
@@ -96,8 +99,24 @@ fun AirBlockHomeScreen() {
         else -> stringResource(id = R.string.locked)
     }
 
+
     val timerText = rememberStopwatch(AirBlockState.timerActivated, context)
 
+    var hasPermission by remember {
+        mutableStateOf(isAccessibilityServiceEnabled(context))
+    }
+
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    androidx.compose.runtime.DisposableEffect(lifecycleOwner) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+
+                hasPermission = isAccessibilityServiceEnabled(context)
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
 
     Box(
         modifier = Modifier
@@ -105,7 +124,6 @@ fun AirBlockHomeScreen() {
             .background(color = colorResource(id = R.color.dark_background))
             .background(iconColor.copy(alpha = 0.04f))
     ) {
-
 
 
         ModeIcons(
@@ -130,35 +148,46 @@ fun AirBlockHomeScreen() {
             )
         }
 
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                //.padding(bottom = 100.dp)
-        ) {
-            when {
-                AirBlockState.isEditingApps -> {
-                    AppBlockingScreen(
-                        onBack = { AirBlockState.isEditingApps = false } // Al volver, APAGAMOS el interruptor
-                    )
-                }
-                !AirBlockState.hasTagRegistered -> {
-                    AirBlockState.timerActivated = false
-                    TagNotRegistered()
-                }
-                // lock open
-                !AirBlockState.isLocked -> {
-                    PhoneUnLocked(onEditAppsClicked = {
-                        // Esta es la lógica real: Cambiar el estado a true
-                        AirBlockState.isEditingApps = true
-                    })
-                    AirBlockState.timerActivated = false
-                }
-                // lock closed
-                else -> {
-                    AirBlockState.timerActivated = true
-                    PhoneLocked(timerText)
-                }
 
+        if (!hasPermission) {
+            AccessibilityPermissionDialog(
+                onAccept = { openAccessibilitySettings(context) },
+                onDismiss = { }
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.BottomCenter)
+                //.padding(bottom = 100.dp)
+            ) {
+                when {
+                    AirBlockState.isEditingApps -> {
+                        AppBlockingScreen(
+                            onBack = {
+                                AirBlockState.isEditingApps = false
+                            } // Al volver, APAGAMOS el interruptor
+                        )
+                    }
+
+                    !AirBlockState.hasTagRegistered -> {
+                        AirBlockState.timerActivated = false
+                        TagNotRegistered()
+                    }
+                    // lock open
+                    !AirBlockState.isLocked -> {
+                        PhoneUnLocked(onEditAppsClicked = {
+                            // Esta es la lógica real: Cambiar el estado a true
+                            AirBlockState.isEditingApps = true
+                        })
+                        AirBlockState.timerActivated = false
+                    }
+                    // lock closed
+                    else -> {
+                        AirBlockState.timerActivated = true
+                        PhoneLocked(timerText)
+                    }
+
+                }
             }
         }
 
@@ -175,7 +204,7 @@ fun rememberStopwatch(isRunning: Boolean, context: Context): String {
         if (isRunning) {
 
             // if there is alredy a start time saved we dont need to save current time
-            if(AirBlockState.startTime == 0L){
+            if (AirBlockState.startTime == 0L) {
                 AirBlockState.startTime = System.currentTimeMillis()
                 TagStorage.saveStartTime(context, AirBlockState.startTime)
             }
@@ -218,5 +247,44 @@ fun resetNfcTag(context: Context) {
     AirBlockState.hasTagRegistered = false
     AirBlockState.isLocked = false
     TagStorage.clearTag(context)
-    Toast.makeText(context, "♻️ Memoria borrada", Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, context.getString(R.string.tag_eliminated), Toast.LENGTH_SHORT).show()
+}
+
+@Composable
+fun AccessibilityPermissionDialog(
+    onDismiss: () -> Unit,
+    onAccept: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { },
+        title = {
+            Text(
+                text = stringResource(id = R.string.dialog_title),
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight.Bold,
+                color = colorResource(id = R.color.unlock_red)
+            )
+        },
+        text = {
+            Text(
+                text = stringResource(id = R.string.dialog_content),
+                fontFamily = FontFamily.Monospace,
+                color = androidx.compose.ui.graphics.Color.White
+            )
+        },
+
+        confirmButton = {
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                TextButton(onClick = onAccept) {
+                    Text(
+                        stringResource(id = R.string.dialog_button),
+                        color = colorResource(id = R.color.unlock_red),
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        },
+        containerColor = colorResource(id = R.color.dark_background),
+        textContentColor = androidx.compose.ui.graphics.Color.White
+    )
 }

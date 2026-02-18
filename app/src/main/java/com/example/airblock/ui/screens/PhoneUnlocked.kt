@@ -18,30 +18,47 @@ import com.example.airblock.R
 fun PhoneUnLocked(
     onEditAppsClicked: () -> Unit
 ) {
+    // to move from unlocked to locked without a tag
+    //Column() {
+        Button(
+            onClick = {
+                //AirBlockState.isLocked = !AirBlockState.isLocked
+                onEditAppsClicked()
+            },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(
+                    id = R.color.button_surface
+                )
+            ),
+            modifier = Modifier
+                .padding(bottom = 130.dp)
+                .width(250.dp)
+                .height(50.dp)
 
-    Button(
-        onClick = {
-            //AirBlockState.isLocked = !AirBlockState.isLocked
-            onEditAppsClicked()
-        },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = colorResource(
-                id = R.color.button_surface
+
+        ) {
+            Text(
+                text = stringResource(id = R.string.btn_manage),
+                color = Color.White
             )
-        ),
-        modifier = Modifier
-            .padding(bottom = 130.dp)
-            .width(250.dp)
-            .height(50.dp)
-
-
-    ) {
-        Text(
-            text = stringResource(id = R.string.btn_manage),
-            color = Color.White
-        )
-    }
+        } /*
+        Button(
+            onClick = { AirBlockState.isLocked = true },
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(
+                    id = R.color.button_surface
+                )
+            ),
+            modifier = Modifier
+                .padding(bottom = 130.dp)
+                .width(250.dp)
+                .height(50.dp),
+        ) {
+            Text("Test")
+        }*/
+    //}
 }
+
 
 
 

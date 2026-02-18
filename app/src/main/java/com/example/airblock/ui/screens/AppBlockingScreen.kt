@@ -1,6 +1,8 @@
 package com.example.airblock.ui.screens
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -42,6 +44,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.ui.tooling.preview.Preview
+import kotlinx.coroutines.*
+
 
 
 // Modelo de datos
@@ -71,10 +75,18 @@ fun AppBlockingScreen(
     var searchQuery by remember { mutableStateOf("") }
 
 
-    // Carga inicial
     LaunchedEffect(Unit) {
         withContext(Dispatchers.IO) {
-            installedApps = getInstalledApps(context)
+            val apps = getInstalledApps(context)
+            val myPackage = context.packageName
+
+            // no esté en la lista de bloqueadas al arrancar
+            if (AirBlockState.blockedApps.contains(myPackage)) {
+                AirBlockState.blockedApps.remove(myPackage)
+                TagStorage.saveBlockedApps(context, AirBlockState.blockedApps.toSet())
+            }
+
+            installedApps = apps
             isLoading = false
         }
     }
@@ -328,7 +340,9 @@ fun toggleAppBlock(context: Context, packageName: String, shouldBlock: Boolean) 
 }
 
 fun toggleAll(context: Context, apps: List<AppInfo>, shouldSelect: Boolean) {
+    val myPackage = context.packageName
     val visiblePackages = apps.map { it.packageName }
+        .filter { it != myPackage }
 
     if (shouldSelect) {
         AirBlockState.blockedApps.addAll(visiblePackages)
@@ -342,30 +356,60 @@ fun toggleAll(context: Context, apps: List<AppInfo>, shouldSelect: Boolean) {
     TagStorage.saveBlockedApps(context, unique)
 }
 
-fun getInstalledApps(context: Context): List<AppInfo> {
+
+suspend fun getInstalledApps(context: Context): List<AppInfo> = withContext(Dispatchers.IO) {
     val pm = context.packageManager
     val apps = pm.getInstalledPackages(0)
     val myPackageName = context.packageName
+    val launcher = getDefaultLauncherPackageName(context)
 
-    val filteredApps = mutableListOf<AppInfo>()
+    val essentialApps = setOf(
+        myPackageName,
+        launcher,
+        "com.android.settings",
+        "com.android.systemui",
+        "com.google.android.googlequicksearchbox"
+    )
 
-    for (app in apps) {
-        if (pm.getLaunchIntentForPackage(app.packageName) != null
-            && app.packageName != myPackageName
-        ) {
-            val name = app.applicationInfo?.loadLabel(pm).toString()
-            val icon = app.applicationInfo?.loadIcon(pm)
+    // 1. Filtramos primero la lista para no procesar apps que no vamos a mostrar
+    val validPackages = apps.filter { app ->
+        val pkg = app.packageName
+        pm.getLaunchIntentForPackage(pkg) != null && !essentialApps.contains(pkg)
+    }
 
-            if (name.isNotEmpty()) {
-                filteredApps.add(AppInfo(name, app.packageName, icon))
+    // 2. Procesamos en paralelo usando 'async'
+    // Dividimos la carga de trabajo: cada app se procesa en un hilo del pool IO
+    val deferredApps = validPackages.map { app ->
+        async {
+            try {
+                val name = app.applicationInfo?.loadLabel(pm).toString()
+                val icon = app.applicationInfo?.loadIcon(pm)
+
+                if (name.isNotEmpty()) {
+                    AppInfo(name, app.packageName, icon)
+                } else null
+            } catch (e: Exception) {
+                null
             }
         }
     }
-    return filteredApps.sortedBy { it.name.lowercase() }
+
+    // 3. Esperamos a que todas las tareas paralelas terminen y ordenamos
+    return@withContext deferredApps.awaitAll()
+        .filterNotNull()
+        .sortedBy { it.name.lowercase() }
 }
 
 @Preview
 @Composable
 fun preview(){
     AppBlockingScreen(onBack = {})
+}
+
+// Función inspirada en Mindful para detectar el Launcher de cualquier marca
+fun getDefaultLauncherPackageName(context: Context): String? {
+    return context.packageManager.resolveActivity(
+        Intent(Intent.ACTION_MAIN).addCategory(Intent.CATEGORY_HOME),
+        PackageManager.MATCH_DEFAULT_ONLY
+    )?.activityInfo?.packageName
 }
