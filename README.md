@@ -13,6 +13,7 @@ Unlike traditional apps that can be easily bypassed, AirBlock requires a physica
 * **Secure Persistence:** Uses SharedPreferences to securely store tag signatures and lock states.
 * **Modern UI:** Built entirely with **Jetpack Compose** using Material Design 3.
 * **Smart State Recovery:** The app remembers if it was locked/unlocked upon restarting.
+* **Multilingual:** Fully localized and available in both English and Spanish.
 
 ---
 
