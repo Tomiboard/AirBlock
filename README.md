@@ -65,13 +65,11 @@ The app follows a unidirectional data flow architecture. The `MainActivity` acts
 * [x] Focus Chronometer (background persistence)
 * [x] State Recovery after reboot
 * [x] **App Blocking:** Block distracting apps (Instagram, TikTok) while locked using `UsageStats`.
-* [ ] Statistics Dashboard.
 * [ ] **Session Scheduling:** Automate Focus Mode based on specific times and days of the week.
 * [ ] **App Block Presets:** Save and switch between different blocking profiles (e.g., "Work", "Study", "Sleep").
 * [ ] **Countdown Timer:** Set a specific duration for your focus sessions.
 * [ ] **Pomodoro Mode:** Integrated timer that automatically unlocks your selected distracting apps during break periods.
 * [ ] Statistics Dashboard & Focus History.
-* [ ] Strict Mode (Prevent disabling Accessibility while locked).
       
 ---
 
