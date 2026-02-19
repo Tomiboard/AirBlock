@@ -23,77 +23,7 @@ Unlike traditional apps that can be easily bypassed, AirBlock requires a physica
 * **Hardware Integration:** Android NFC Adapter API
 * **Architecture:** MVVM (Model-View-ViewModel pattern)
 * **Persistence:** SharedPreferences & Custom State Management
-
----
-
-## 🏗️ Architecture
-
-The app follows a unidirectional data flow architecture. The `MainActivity` acts as the hardware bridge, while `AirBlockState` manages the reactive UI state.
-
-```mermaid
-classDiagram
-    class MainActivity {
-        +onCreate()
-        +onResume()
-        +onPause()
-        +onNewIntent(NFC)
-        +bytesToHex(ByteArray)
-        +enableNfcForegroundDispatch()
-        -disableNfcForegroundDispatch()
-    }
-
-    class AirBlockState {
-        +isLocked: Boolean
-        +startTime: Long
-        +hasTagRegistered: Boolean
-        +timerActivated: Boolean
-        +registeredTagId: String
-    }
-
-    class TagStorage {
-        +saveTag()
-        +getTag()
-        +saveLockState()
-        +saveStartTime()
-    }
-
-    class AirBlockHome {
-        +AirBlockHomeScreen()
-        +rememberStopwatch()
-        +formatTime()
-        +resetNfcTag()
-    }
-
-    %% Agrupamos los componentes de UI en un paquete
-    namespace AppComponents {
-        class PhoneLocked {
-            +PhoneLocked()
-        }
-        class PhoneUnlocked {
-            +PhoneUnlocked()
-        }
-        class TagNotRegistered {
-            +TagNotRegistered()
-        }
-    }
-
-    %% Relaciones Principales
-    MainActivity ..> AirBlockState : Updates State
-    MainActivity ..> TagStorage : Persists Data
-    TagStorage ..> SharedPreferences : Disk I/O
-    
-    %% Relaciones de UI (El flujo de datos)
-    AirBlockHome ..> AirBlockState : Observes State
-    
-    %% AirBlockHome "llama" o "pinta" a los componentes
-    AirBlockHome --> PhoneLocked : Renders
-    AirBlockHome --> PhoneUnlocked : Renders
-    AirBlockHome --> TagNotRegistered : Renders
-
-    
-
-    TagStorage ..> SharedPreferences : Android Disk
-```
+The app follows a unidirectional data flow architecture. The `MainActivity` acts as the hardware bridge for NFC, while the `AppBlockService` acts as the background guardian.
 
 ---
 
@@ -133,9 +63,15 @@ classDiagram
 * [x] NFC Tag Registration & Persistence
 * [x] Focus Chronometer (background persistence)
 * [x] State Recovery after reboot
-* [ ] **App Blocking:** Block distracting apps (Instagram, TikTok) while locked using `UsageStats`.
+* [x] **App Blocking:** Block distracting apps (Instagram, TikTok) while locked using `UsageStats`.
 * [ ] Statistics Dashboard.
-
+* [ ] **Session Scheduling:** Automate Focus Mode based on specific times and days of the week.
+* [ ] **App Block Presets:** Save and switch between different blocking profiles (e.g., "Work", "Study", "Sleep").
+* [ ] **Countdown Timer:** Set a specific duration for your focus sessions.
+* [ ] **Pomodoro Mode:** Integrated timer that automatically unlocks your selected distracting apps during break periods.
+* [ ] Statistics Dashboard & Focus History.
+* [ ] Strict Mode (Prevent disabling Accessibility while locked).
+      
 ---
 
 ## 📄 License
