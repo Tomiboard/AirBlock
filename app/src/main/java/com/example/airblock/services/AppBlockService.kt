@@ -2,7 +2,6 @@ package com.example.airblock.services
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.view.accessibility.AccessibilityEvent
 import com.example.airblock.MainActivity
 import com.example.airblock.state.AirBlockState
