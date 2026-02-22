@@ -39,5 +39,7 @@ object AirBlockState   {
         blockedApps.addAll(saved)
     }
 
+    var showSettings by mutableStateOf(false)
+
     var isEditingApps by mutableStateOf(false)
 }

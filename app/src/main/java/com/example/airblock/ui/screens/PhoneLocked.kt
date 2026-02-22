@@ -2,6 +2,7 @@ package com.example.airblock.ui.screens
 
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
@@ -33,29 +34,7 @@ fun PhoneLocked(timerText: String) {
         TimerScreen(timerText)
 
 
-        Button(
-            onClick = {
-                AirBlockState.hasTagRegistered = !AirBlockState.hasTagRegistered
-                AirBlockState.isLocked = !AirBlockState.isLocked
-
-            },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(
-                    id = R.color.button_surface
-                )
-            ),
-            modifier = Modifier
-                .padding(bottom = 130.dp)
-                .width(250.dp)
-                .height(50.dp)
-
-
-        ) {
-            Text(
-                text = "unblock",
-                color = Color.White
-            )
-        }
+        Box(modifier = Modifier.padding(bottom = 130.dp))
     }
 }
 

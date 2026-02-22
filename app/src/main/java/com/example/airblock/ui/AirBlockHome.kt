@@ -44,7 +44,7 @@ import com.example.airblock.ui.screens.PhoneLocked
 import com.example.airblock.ui.screens.PhoneUnLocked
 import com.example.airblock.ui.screens.TagNotRegistered
 import com.example.airblock.ui.screens.AppBlockingScreen
-
+import com.example.airblock.ui.screens.SettingsScreen
 
 
 @Composable
@@ -118,6 +118,7 @@ fun AirBlockHomeScreen() {
         onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -133,21 +134,22 @@ fun AirBlockHomeScreen() {
             pulseDuration = pulseDuration,
             iconText = iconText
         )
+        if (!AirBlockState.isLocked) {
 
-        IconButton(
-            onClick = { resetNfcTag(context) },
-            modifier = Modifier
-                .align(Alignment.TopEnd) // Posición en la esquina (asumiendo que está en un Box)
-                .padding(10.dp)
-                .size(50.dp) // Tamaño del área clicable
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.settings_24dp),
-                contentDescription = "mode icon",
-                modifier = Modifier.size(50.dp),
-            )
+            IconButton(
+                onClick = { AirBlockState.showSettings = true },
+                modifier = Modifier
+                    .align(Alignment.TopEnd) // Posición en la esquina (asumiendo que está en un Box)
+                    .padding(10.dp)
+                    .size(50.dp) // Tamaño del área clicable
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.settings_24dp),
+                    contentDescription = "mode icon",
+                    modifier = Modifier.size(50.dp),
+                )
+            }
         }
-
 
         if (!hasPermission) {
             AccessibilityPermissionDialog(
@@ -161,6 +163,13 @@ fun AirBlockHomeScreen() {
                 //.padding(bottom = 100.dp)
             ) {
                 when {
+                    AirBlockState.showSettings -> {
+                        SettingsScreen(
+                            onBack = { AirBlockState.showSettings = false },
+                            context
+                        )
+                    }
+
                     AirBlockState.isEditingApps -> {
                         AppBlockingScreen(
                             onBack = {
@@ -238,16 +247,6 @@ fun AirBlockHome() {
     AirBlockTheme {
         AirBlockHomeScreen()
     }
-}
-
-
-fun resetNfcTag(context: Context) {
-
-    AirBlockState.registeredTagId = null
-    AirBlockState.hasTagRegistered = false
-    AirBlockState.isLocked = false
-    TagStorage.clearTag(context)
-    Toast.makeText(context, context.getString(R.string.tag_eliminated), Toast.LENGTH_SHORT).show()
 }
 
 @Composable

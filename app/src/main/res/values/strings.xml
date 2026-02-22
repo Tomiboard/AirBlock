@@ -24,5 +24,10 @@
     <string name="dialog_content">Enable firewall service to start blocking.</string>
     <string name="dialog_button">GRANT_ACCESS</string>
 
+    //Settings
+    <string name="delete_tag">Delete Tag</string>
+    
+
+
 
 </resources>

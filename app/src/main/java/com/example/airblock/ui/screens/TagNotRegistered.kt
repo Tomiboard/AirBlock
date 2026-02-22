@@ -29,7 +29,7 @@ fun TagNotRegistered() {
     Column {
 
 
-        Button(
+       /* Button(
             onClick = { AirBlockState.hasTagRegistered = !AirBlockState.hasTagRegistered },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(
@@ -46,7 +46,7 @@ fun TagNotRegistered() {
                 text = stringResource(id = R.string.bts_scan),
                 color = Color.White
             )
-        }
+        }*/
 
         Text( // Falta un on click listener para link amazon
             text = stringResource(id = R.string.buy_tag),
