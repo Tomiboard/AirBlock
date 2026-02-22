@@ -225,6 +225,7 @@ fun rememberStopwatch(isRunning: Boolean, context: Context): String {
             }
         } else {
             timeMillis = 0L
+            AirBlockState.startTime = 0L
         }
     }
 
