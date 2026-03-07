@@ -8,12 +8,12 @@
     <string name="tag_eliminated">♻️ tag eliminated</string>
 
 
-    // Icon text
+    <!-- Icon text -->
     <string name="no_tag">AIRBLOCK STANDBY</string>
     <string name="unlocked">AIRBLOCK DISABLED</string>
     <string name="locked">AIRBLOCK ACTIVE</string>
 
-    //Tag detection
+    <!-- Tag detection -->
     <string name="nfc_tag_detected">✅ Tag detected</string>
     <string name="nfc_tag_registered">✅ Tag registered successfully</string>
     <string name="wrong_nfc_tag_detected">⛔ Wrong Tag</string>
@@ -24,10 +24,18 @@
     <string name="dialog_content">Enable firewall service to start blocking.</string>
     <string name="dialog_button">GRANT_ACCESS</string>
 
-    //Settings
+    <!-- Settings -->
     <string name="delete_tag">Delete Tag</string>
-    
 
+    <!-- App Blocking Screen -->
+    <string name="target_selector_title">TARGET_SELECTOR //</string>
+    <string name="back_button">&lt; BACK</string>
+    <string name="search_module_placeholder">Search module…</string>
+    <string name="clear_search_desc">Clear</string>
+    <string name="deselect_all">[ DESELECT ALL ]</string>
+    <string name="select_all">[ SELECT ALL ]</string>
 
+    <!-- Phone Unlocked Screen -->
+    <string name="lock_button">Locck phone</string>
 
 </resources>

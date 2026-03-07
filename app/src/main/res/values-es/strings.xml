@@ -5,7 +5,7 @@
     <string name="btn_manage">Gestionar Apps</string>
     <string name="dont_have_tag">No se detecta llave física. Escanea un Tag NFC para activar el sistema.</string>
     <string name="buy_tag">¿No tienes Tag? Consigue uno aquí</string>
-    <string name="any_tag_info">O usa cualquier tarjeta, pegatina o tag NFC estándar</string>
+    <string name="any_tag_info">Or use any standard NFC sticker, card or tag</string>
     <string name="no_tag">AIRBLOCK EN ESPERA</string>
     <string name="unlocked">AIRBLOCK INACTIVO</string>
     <string name="locked">AIRBLOCK ACTIVO</string>
@@ -18,4 +18,14 @@
     <string name="dialog_button">CONCEDER_ACCESO</string>
     <string name="tag_eliminated">♻️ tag eliminado</string>
 
+    <!-- App Blocking Screen -->
+    <string name="target_selector_title">SELECTOR_DE_OBJETIVO //</string>
+    <string name="back_button">&lt; VOLVER</string>
+    <string name="search_module_placeholder">Buscar módulo…</string>
+    <string name="clear_search_desc">Limpiar</string>
+    <string name="deselect_all">[ DESELECCIONAR TODO ]</string>
+    <string name="select_all">[ SELECCIONAR TODO ]</string>
+
+    <!-- Phone Unlocked Screen -->
+    <string name="lock_button">Bloquear movil</string>
 </resources>

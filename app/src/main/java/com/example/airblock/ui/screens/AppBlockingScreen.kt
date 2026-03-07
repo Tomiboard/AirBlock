@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -122,7 +123,7 @@ fun AppBlockingScreen(
                 TopAppBar(
                     title = {
                         Text(
-                            "TARGET_SELECTOR //",
+                            stringResource(id = R.string.target_selector_title),
                             style = TextStyle(
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Bold,
@@ -135,7 +136,7 @@ fun AppBlockingScreen(
                     navigationIcon = {
                         TextButton(onClick = onBack) {
                             Text(
-                                "< BACK",
+                                stringResource(id = R.string.back_button),
                                 color = accentRed,
                                 fontFamily = FontFamily.Monospace,
                                 fontWeight = FontWeight.Bold
@@ -157,7 +158,7 @@ fun AppBlockingScreen(
                         .padding(horizontal = 16.dp, vertical = 8.dp),
                     placeholder = {
                         Text(
-                            "Search module...",
+                            stringResource(id = R.string.search_module_placeholder),
                             color = textGray,
                             fontFamily = FontFamily.Monospace
                         )
@@ -170,7 +171,7 @@ fun AppBlockingScreen(
                             IconButton(onClick = { searchQuery = "" }) {
                                 Icon(
                                     Icons.Filled.Close,
-                                    contentDescription = "Clear",
+                                    contentDescription = stringResource(id = R.string.clear_search_desc),
                                     tint = textGray
                                 )
                             }
@@ -200,7 +201,7 @@ fun AppBlockingScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = if (allSelected) "[ DESELECT ALL ]" else "[ SELECT ALL ]",
+                        text = if (allSelected) stringResource(id = R.string.deselect_all) else stringResource(id = R.string.select_all),
                         style = TextStyle(
                             fontFamily = FontFamily.Monospace,
                             fontWeight = FontWeight.Bold,
