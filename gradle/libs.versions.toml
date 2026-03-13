@@ -10,6 +10,7 @@ kotlin = "2.3.10"
 composeBom = "2026.02.00"
 materialIconsExtended = "1.7.8"
 materialIconsExtendedVersion = "1.7.8"
+navigationCompose = "2.9.7"
 
 [libraries]
 #noinspection SimilarGradleDependency
@@ -30,6 +31,7 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

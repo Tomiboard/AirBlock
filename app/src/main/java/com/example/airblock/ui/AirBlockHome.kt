@@ -2,7 +2,6 @@ package com.example.airblock.ui
 
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,12 +42,13 @@ import com.example.airblock.state.AirBlockState
 import com.example.airblock.ui.screens.PhoneLocked
 import com.example.airblock.ui.screens.PhoneUnLocked
 import com.example.airblock.ui.screens.TagNotRegistered
-import com.example.airblock.ui.screens.AppBlockingScreen
-import com.example.airblock.ui.screens.SettingsScreen
 
 
 @Composable
-fun AirBlockHomeScreen() {
+fun AirBlockHomeScreen(
+    onNavigateToSettings: () -> Unit,
+    onNavigateToAppBlocking: () -> Unit
+) {
 
 
     val context = LocalContext.current
@@ -102,16 +102,19 @@ fun AirBlockHomeScreen() {
 
     val timerText = rememberStopwatch(AirBlockState.timerActivated, context)
 
+    val isPreview = androidx.compose.ui.platform.LocalInspectionMode.current
+
     var hasPermission by remember {
-        mutableStateOf(isAccessibilityServiceEnabled(context))
+        mutableStateOf(if (isPreview) true else isAccessibilityServiceEnabled(context))
     }
 
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     androidx.compose.runtime.DisposableEffect(lifecycleOwner) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
             if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-
-                hasPermission = isAccessibilityServiceEnabled(context)
+                if (!isPreview) {
+                    hasPermission = isAccessibilityServiceEnabled(context)
+                }
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -137,7 +140,7 @@ fun AirBlockHomeScreen() {
         if (!AirBlockState.isLocked) {
 
             IconButton(
-                onClick = { AirBlockState.showSettings = true },
+                onClick = { onNavigateToSettings() },
                 modifier = Modifier
                     .align(Alignment.TopEnd) // Posición en la esquina (asumiendo que está en un Box)
                     .padding(10.dp)
@@ -153,8 +156,7 @@ fun AirBlockHomeScreen() {
 
         if (!hasPermission) {
             AccessibilityPermissionDialog(
-                onAccept = { openAccessibilitySettings(context) },
-                onDismiss = { }
+                onAccept = { openAccessibilitySettings(context) }
             )
         } else {
             Box(
@@ -163,21 +165,6 @@ fun AirBlockHomeScreen() {
                 //.padding(bottom = 100.dp)
             ) {
                 when {
-                    AirBlockState.showSettings -> {
-                        SettingsScreen(
-                            onBack = { AirBlockState.showSettings = false },
-                            context
-                        )
-                    }
-
-                    AirBlockState.isEditingApps -> {
-                        AppBlockingScreen(
-                            onBack = {
-                                AirBlockState.isEditingApps = false
-                            } // Al volver, APAGAMOS el interruptor
-                        )
-                    }
-
                     !AirBlockState.hasTagRegistered -> {
                         AirBlockState.timerActivated = false
                         TagNotRegistered()
@@ -186,7 +173,7 @@ fun AirBlockHomeScreen() {
                     !AirBlockState.isLocked -> {
                         PhoneUnLocked(onEditAppsClicked = {
                             // Esta es la lógica real: Cambiar el estado a true
-                            AirBlockState.isEditingApps = true
+                            onNavigateToAppBlocking()
                         })
                         AirBlockState.timerActivated = false
                     }
@@ -244,15 +231,17 @@ fun formatTime(millis: Long): String {
 
 @Preview(showBackground = true)
 @Composable
-fun AirBlockHome() {
+fun AirBlockHomeScreenPreview() {
     AirBlockTheme {
-        AirBlockHomeScreen()
+        AirBlockHomeScreen(
+            onNavigateToSettings = {},
+            onNavigateToAppBlocking = {}
+        )
     }
 }
 
 @Composable
 fun AccessibilityPermissionDialog(
-    onDismiss: () -> Unit,
     onAccept: () -> Unit
 ) {
     AlertDialog(
