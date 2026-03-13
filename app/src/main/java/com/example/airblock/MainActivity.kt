@@ -15,7 +15,6 @@ import androidx.activity.enableEdgeToEdge
 import com.example.airblock.data.TagStorage
 import com.example.airblock.services.AppBlockService
 import com.example.airblock.state.AirBlockState
-import com.example.airblock.ui.AirBlockHomeScreen
 import com.example.airblock.ui.theme.AirBlockTheme
 
 class MainActivity : ComponentActivity() {
@@ -41,7 +40,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             AirBlockTheme {
-                AirBlockHomeScreen()
+                AirBlockNavigation()
             }
         }
     }

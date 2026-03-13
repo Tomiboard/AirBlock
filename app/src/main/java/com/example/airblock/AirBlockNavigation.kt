@@ -11,7 +11,7 @@ import com.example.airblock.ui.screens.AppBlockingScreen
 import com.example.airblock.ui.screens.resetNfcTag
 
 @Composable
-fun AirBlockAppNavigation() {
+fun AirBlockNavigation() {
 
     val navController = rememberNavController()
     val context = LocalContext.current
