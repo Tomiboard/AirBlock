@@ -2,7 +2,6 @@ package com.example.airblock.ui
 
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,7 +47,9 @@ import com.example.airblock.ui.screens.SettingsScreen
 
 
 @Composable
-fun AirBlockHomeScreen() {
+fun AirBlockHomeScreen(
+    onNavigateToSettings: () -> Unit,
+    onNavigateToAppBlocking: () -> Unit) {
 
 
     val context = LocalContext.current
@@ -137,7 +138,7 @@ fun AirBlockHomeScreen() {
         if (!AirBlockState.isLocked) {
 
             IconButton(
-                onClick = { AirBlockState.showSettings = true },
+                onClick = { onNavigateToSettings() },
                 modifier = Modifier
                     .align(Alignment.TopEnd) // Posición en la esquina (asumiendo que está en un Box)
                     .padding(10.dp)
@@ -163,21 +164,6 @@ fun AirBlockHomeScreen() {
                 //.padding(bottom = 100.dp)
             ) {
                 when {
-                    AirBlockState.showSettings -> {
-                        SettingsScreen(
-                            onBack = { AirBlockState.showSettings = false },
-                            context
-                        )
-                    }
-
-                    AirBlockState.isEditingApps -> {
-                        AppBlockingScreen(
-                            onBack = {
-                                AirBlockState.isEditingApps = false
-                            } // Al volver, APAGAMOS el interruptor
-                        )
-                    }
-
                     !AirBlockState.hasTagRegistered -> {
                         AirBlockState.timerActivated = false
                         TagNotRegistered()
@@ -186,7 +172,7 @@ fun AirBlockHomeScreen() {
                     !AirBlockState.isLocked -> {
                         PhoneUnLocked(onEditAppsClicked = {
                             // Esta es la lógica real: Cambiar el estado a true
-                            AirBlockState.isEditingApps = true
+                            onNavigateToAppBlocking()
                         })
                         AirBlockState.timerActivated = false
                     }

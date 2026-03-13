@@ -1,6 +1,5 @@
 package com.example.airblock.ui.screens
 
-import android.R.attr.navigationIcon
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
@@ -30,7 +29,7 @@ import com.example.airblock.state.AirBlockState
 @Composable
 fun SettingsScreen(
     onBack: () -> Unit,
-    context: Context
+    onResetTag: () -> Boolean
 ) {
     val bgDark = colorResource(id = R.color.dark_background)
     val uriHandler = LocalUriHandler.current
@@ -149,7 +148,7 @@ fun SettingsRow(
 @Preview
 @Composable
 fun SettingsScreenPreview() {
-    SettingsScreen(onBack = {}, context = LocalContext.current)
+    SettingsScreen(onBack = {}, context = LocalContext.current,)
 }
 
 

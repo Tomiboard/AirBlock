@@ -19,6 +19,7 @@
     <string name="tag_eliminated">♻️ tag eliminado</string>
 
     <!-- App Blocking Screen -->
+    <string name="delete_tag">Eliminar el Tag</string>
     <string name="target_selector_title">SELECTOR_DE_OBJETIVO //</string>
     <string name="back_button">&lt; VOLVER</string>
     <string name="search_module_placeholder">Buscar módulo…</string>
